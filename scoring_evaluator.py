@@ -20,7 +20,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 # ---------------------------------------------------------------------------
@@ -99,6 +99,11 @@ def llm_judge_score(candidate_output: str, model: str | None = None) -> dict[str
             messages=[{"role": "user", "content": TONE_JUDGE_PROMPT.format(output=candidate_output)}],
         )
         raw = response.choices[0].message.content.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
         scores = json.loads(raw)
         avg = sum(v for k, v in scores.items() if k != "reasoning") / 5
         scores["average"] = round(avg, 2)

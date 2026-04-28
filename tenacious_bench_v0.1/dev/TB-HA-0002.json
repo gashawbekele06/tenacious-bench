@@ -1,0 +1,88 @@
+{
+  "task_id": "TB-HA-0002",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "objection-handling",
+  "input": {
+    "hiring_signal_brief": "ClearStake Finance posted 4 senior ML engineer roles 10 days ago. They announced a $22M Series B 60 days ago. The VP Engineering left a Glassdoor review 45 days ago mentioning 'scaling pains with our AI infrastructure team.'",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Available: 3 ML engineers. NestJS stack committed through Q3 2026 on Modo Compass engagement.",
+    "prospect_profile": {
+      "company_name": "ClearStake Finance",
+      "company_size": "51-200",
+      "segment": "Series B fintech",
+      "requested_headcount": 4,
+      "tech_stack": ["Python", "Spark", "Airflow", "dbt"],
+      "ai_maturity_score": 3.0,
+      "signal_confidence": 0.71
+    },
+    "prior_thread": "Turn 1 (agent): Referenced ClearStake's ML hiring surge and $22M raise. Offered Tenacious ML engineers on 2-week timeline.\n\nTurn 2 (prospect reply): 'We have had bad experiences with offshore development teams before — timezone issues and code quality problems. Not sure this is a fit.'"
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": ["2-week", "pre-vetted", "ML"],
+    "banned_phrases": [
+      "just as good as in-house",
+      "guarantee quality",
+      "offshore is not",
+      "we understand your concern",
+      "completely understand",
+      "I hear you",
+      "hope this finds you well",
+      "best-in-class",
+      "world-class",
+      "top talent",
+      "synergy",
+      "leverage"
+    ],
+    "required_elements": ["specific_outcome_or_metric", "calendar_link"],
+    "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.80,
+    "dimensions": [
+      {
+        "name": "no_defensive_language",
+        "weight": 0.30,
+        "check_type": "not_contains",
+        "description": "Must NOT use generic defensive reassurance phrases. These phrases indicate the agent failed to handle the objection with specific evidence.",
+        "check_value": "just as good as in-house|guarantee quality|offshore is not|we understand your concern|completely understand|I hear you|best-in-class|world-class|top talent|synergy|leverage"
+      },
+      {
+        "name": "specific_evidence_check",
+        "weight": 0.30,
+        "check_type": "contains",
+        "description": "Must reference a specific Tenacious outcome — a metric, timeline, or client result — not a generic claim.",
+        "check_value": "2-week|pre-vetted|placed|deployed|within"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.20,
+        "check_type": "contains",
+        "description": "Must reference the ML hiring signal from the brief — grounding the response in their specific context, not a generic objection reply.",
+        "check_value": "ML|machine learning|AI infrastructure|Series B"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.10,
+        "check_type": "regex",
+        "description": "Output must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.10,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 tone markers. Pass = average >= 4/5. Particularly checks low-pressure and evidence-based.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": ["tr_sim_6beaf527", "89337dd7-bb36-41d7-8530-190df8734cc3"],
+    "week10_probe_ids": ["P-011", "P-010", "P-012"],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

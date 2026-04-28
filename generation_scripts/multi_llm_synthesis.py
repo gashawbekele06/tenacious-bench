@@ -28,7 +28,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 FRONTIER_MODEL = "claude-sonnet-4-6"
 DEV_MODEL = "qwen/qwen3-235b-a22b"

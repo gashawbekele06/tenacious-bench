@@ -1,0 +1,75 @@
+{
+  "task_id": "TB-TD-0001",
+  "source_mode": "trace-derived",
+  "difficulty": "medium",
+  "dimension": "signal-grounding",
+  "input": {
+    "hiring_signal_brief": "Acme Corp posted 3 senior ML engineer roles on LinkedIn in the past 14 days. CTO quoted in TechCrunch: 'We are doubling our AI team by Q3.'",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 5 ML engineers available, 2 already committed.",
+    "prospect_profile": {
+      "company_name": "Acme Corp",
+      "company_size": "201-500",
+      "segment": "Series B SaaS",
+      "requested_headcount": 3,
+      "tech_stack": ["Python", "PyTorch", "Kubernetes"],
+      "ai_maturity_score": 3.5,
+      "signal_confidence": 0.82
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": ["ML engineer", "doubling", "Q3"],
+    "banned_phrases": [
+      "hope this finds you well",
+      "circle back",
+      "touch base",
+      "synergy",
+      "leverage",
+      "best-in-class",
+      "reach out"
+    ],
+    "required_elements": ["calendar_link", "company_name_mention", "specific_signal_reference"],
+    "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.25,
+        "check_type": "not_contains",
+        "description": "Output must contain zero banned phrases from the Tenacious style guide.",
+        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|best-in-class|reach out"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.35,
+        "check_type": "contains",
+        "description": "Output must reference at least one specific hiring signal from the brief.",
+        "check_value": "ML engineer|doubling|Q3"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.1,
+        "check_type": "regex",
+        "description": "Output must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.3,
+        "check_type": "llm_score",
+        "description": "LLM judge scores output on 5 Tenacious tone markers. Pass = average >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": ["tr_sim_6beaf527", "a553180f-80d2-4d4b-9a1e-d525b1219cfd"],
+    "week10_probe_ids": ["P-004", "P-007"],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

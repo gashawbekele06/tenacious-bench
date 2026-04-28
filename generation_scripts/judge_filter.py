@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 POINTWISE_PROMPT = """You are a benchmark quality evaluator for B2B sales AI evaluation tasks.
 

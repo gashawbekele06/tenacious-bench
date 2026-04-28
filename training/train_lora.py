@@ -24,7 +24,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 def load_config(config_path: str) -> dict:
