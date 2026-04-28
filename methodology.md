@@ -1,26 +1,46 @@
 # Methodology — Tenacious-Bench v0.1
 
-**Author:** [Your name]  
+**Author:** Gashaw Bekele  
+**Email:** gashaw@10academy.org  
 **Status:** Living document — updated through Day 7
 
 ---
 
 ## Path Declaration
 
-**Chosen Path:** [ ] A — SFT generation component  /  [ ] B — Preference-tuned judge  /  [ ] C — Process reward model
+**Chosen Path:** [x] A — SFT generation component
 
-**Preliminary Justification (complete on Day 0/1):**
+**Justification:**
 
-> State which path you chose and why, citing at least 2 Week 10 trace IDs.
-> The failure mode dictates the treatment — path choice without trace evidence loses methodology credit.
+My Week 10 agent's dominant failure mode was **tone drift** — specifically the
+offshore-perception objection (probe P-011, trigger rate 0.44, highest in the
+entire 31-probe library) and turn-4 vendor-speak (probe P-010, trigger rate
+0.38). In both cases the agent's outreach draft drifted from the Tenacious
+style guide into generic defensive or jargon-heavy language: phrases like
+"leverage our best-in-class offshore talent" appeared in turn-4 drafts even
+though the system prompt explicitly banned them, and replies to the
+"bad offshore experience" objection defaulted to ungrounded reassurances
+rather than specific Tenacious case-study evidence. This is the canonical
+Path A failure — the model knows the task structure but produces the wrong
+surface realisation because style-guide grounding dilutes over long context.
 
-My Week 10 agent's dominant failure mode was: [describe]
+Evidence from Week 10 traces:
+- `tr_sim_6beaf527` (held_out_traces.jsonl): failed on `cross_sell_decline`
+  (retail_dev_015) and `escalation_decline` (retail_dev_020) across 4 of 5
+  trials — both are objection-handling turns where the agent replaced
+  specific evidence with generic appeasement language, directly mirroring
+  the P-011 failure signature.
+- `a553180f-80d2-4d4b-9a1e-d525b1219cfd` (trace_log.jsonl, reward=0.0):
+  a tone-related failure in the retail probe suite where the agent's turn-3
+  reply abandoned the established conversational register, producing a
+  response that triggered the style-compliance checker.
 
-Evidence:
-- trace-XXXX: [what happened]
-- trace-XXXX: [what happened]
-
-This points to Path [X] because: [reason]
+Path A (SFT generation) is the correct treatment because the failure is
+a consistent surface-level pattern — not an inconsistency in judgement
+(which would call for Path B) and not a trajectory-level planning error
+(Path C). Fine-tuning on high-quality (input, Tenacious-style output) pairs
+directly teaches the model to maintain tone across turns and under objection
+pressure without relying on in-context style instructions that dilute.
 
 ---
 
