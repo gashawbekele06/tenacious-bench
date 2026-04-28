@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 FRONTIER_MODEL = "claude-sonnet-4-6"
-DEV_MODEL = "openrouter/qwen/qwen3-235b-a22b"
+DEV_MODEL = "qwen/qwen3-235b-a22b"
 
 HARD_SEED_PROMPT = """You are an expert benchmark designer for B2B sales AI agents.
 
@@ -100,21 +100,24 @@ JUDGE_THRESHOLD = {"input_coherence": 3, "ground_truth_verifiability": 4, "rubri
 
 
 def call_anthropic(prompt: str, model: str = FRONTIER_MODEL) -> str:
-    import anthropic
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    response = client.messages.create(
-        model=model,
+    from openai import OpenAI
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.environ["ANTHROPIC_API_KEY"],
+    )
+    response = client.chat.completions.create(
+        model=f"anthropic/{model}",
         max_tokens=1024,
         messages=[{"role": "user", "content": prompt}],
     )
-    return response.content[0].text.strip()
+    return response.choices[0].message.content.strip()
 
 
 def call_openrouter(prompt: str, model: str = DEV_MODEL) -> str:
     from openai import OpenAI
     client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
-        api_key=os.environ["OPENROUTER_API_KEY"],
+        api_key=os.environ["ANTHROPIC_API_KEY"],
     )
     response = client.chat.completions.create(
         model=model,

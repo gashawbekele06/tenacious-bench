@@ -85,17 +85,20 @@ OUTREACH DRAFT:
 
 
 def llm_judge_score(candidate_output: str, model: str | None = None) -> dict[str, Any]:
-    """Call the LLM judge. Returns dict with scores and pass/fail."""
+    """Call the LLM judge via OpenRouter. Returns dict with scores and pass/fail."""
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-        used_model = model or "claude-sonnet-4-6"
-        response = client.messages.create(
+        from openai import OpenAI
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=os.environ["ANTHROPIC_API_KEY"],
+        )
+        used_model = model or "anthropic/claude-haiku-4-5"
+        response = client.chat.completions.create(
             model=used_model,
             max_tokens=256,
             messages=[{"role": "user", "content": TONE_JUDGE_PROMPT.format(output=candidate_output)}],
         )
-        raw = response.content[0].text.strip()
+        raw = response.choices[0].message.content.strip()
         scores = json.loads(raw)
         avg = sum(v for k, v in scores.items() if k != "reasoning") / 5
         scores["average"] = round(avg, 2)
