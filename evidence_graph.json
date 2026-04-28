@@ -1,0 +1,45 @@
+{
+  "_comment": "Maps every numeric claim in the memo and blog post to its source. Fill in as you produce results.",
+  "claims": [
+    {
+      "claim_id": "delta_a_headline",
+      "claim_text": "Trained model achieves X% pass rate on Tenacious-Bench held-out, vs Y% for baseline",
+      "source_type": "ablation_table",
+      "source_file": "ablations/ablation_results.json",
+      "source_field": "delta_a.mean_a",
+      "resolved": false
+    },
+    {
+      "claim_id": "delta_b_result",
+      "claim_text": "Training beats / does not beat prompt engineering alone",
+      "source_type": "ablation_table",
+      "source_file": "ablations/ablation_results.json",
+      "source_field": "delta_b.significant",
+      "resolved": false
+    },
+    {
+      "claim_id": "dataset_size",
+      "claim_text": "Tenacious-Bench v0.1 contains N tasks across M dimensions",
+      "source_type": "dataset_file",
+      "source_file": "tenacious_bench_v0.1/",
+      "source_field": "count of task JSON files",
+      "resolved": false
+    },
+    {
+      "claim_id": "inter_rater_agreement",
+      "claim_text": "Inter-rater agreement of X% across all rubric dimensions",
+      "source_type": "methodology_doc",
+      "source_file": "inter_rater_agreement.md",
+      "source_field": "Results table — Overall % Agreement",
+      "resolved": false
+    },
+    {
+      "claim_id": "contamination_clean",
+      "claim_text": "Zero held-out tasks have 8-gram overlap with training partition",
+      "source_type": "contamination_report",
+      "source_file": "contamination_check.json",
+      "source_field": "summary.ngram_violations",
+      "resolved": false
+    }
+  ]
+}

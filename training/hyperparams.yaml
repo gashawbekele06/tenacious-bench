@@ -1,0 +1,39 @@
+# Tenacious-Bench LoRA Training Hyperparameters
+# These are the default settings from the Unsloth Qwen 3.5 guide.
+# Change backbone and preference_algorithm based on your chosen path.
+
+# --- Backbone ---
+backbone: "unsloth/Qwen2.5-0.5B-Instruct"   # Change to 1.5B or 3B if budget allows
+# backbone: "unsloth/Qwen2.5-1.5B-Instruct"
+# backbone: "unsloth/Qwen2.5-3B-Instruct"
+
+# --- LoRA settings ---
+lora_r: 16
+lora_alpha: 16
+
+# --- Sequence length ---
+max_seq_length: 2048
+
+# --- Training ---
+epochs: 3
+batch_size: 2          # per_device; keep low for T4 16GB
+grad_accum: 4          # effective batch = batch_size * grad_accum = 8
+lr: 2.0e-4             # Path A SFT default
+warmup_steps: 5
+
+# --- Precision ---
+# T4 (Colab free): fp16=true, bf16=false
+# 4090 / A100 (RunPod): fp16=false, bf16=true
+bf16: false
+
+# --- Reproducibility ---
+seed: 42
+
+# --- Path B only ---
+preference_algorithm: "orpo"   # Options: dpo | simpo | orpo
+# For Path B, lower the LR:
+# lr: 5.0e-5
+
+# --- Output ---
+output_dir: "training/output"
+adapter_repo_name: "tenacious-bench-lora-path-a"   # Update per path

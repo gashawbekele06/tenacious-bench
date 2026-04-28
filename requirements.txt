@@ -1,0 +1,40 @@
+# Core ML / Training
+torch>=2.1.0
+transformers>=4.43.0
+peft>=0.11.0
+trl>=0.9.0
+datasets>=2.20.0
+accelerate>=0.30.0
+bitsandbytes>=0.43.0
+unsloth>=2024.8
+
+# HuggingFace Hub
+huggingface_hub>=0.23.0
+
+# LLM API clients
+anthropic>=0.30.0
+openai>=1.35.0          # used via OpenRouter base_url
+
+# Evaluation & data processing
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.5.0
+scipy>=1.13.0           # bootstrap CI for ablation stats
+sentence-transformers>=3.0.0  # embedding similarity for contamination check
+
+# JSON / schema validation
+jsonschema>=4.22.0
+
+# Observability
+langfuse>=2.36.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+tiktoken>=0.7.0         # token counting for cost estimation
+rouge-score>=0.1.2      # surface-level text overlap check
+nltk>=3.8.1             # n-gram overlap for contamination check
+
+# Notebook / dev
+ipykernel>=6.29.0
+jupyterlab>=4.2.0

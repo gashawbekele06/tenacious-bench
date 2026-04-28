@@ -1,0 +1,7 @@
+timestamp,bucket,model_or_service,purpose,tokens_or_units,cost_usd,notes
+2026-04-28T00:00:00Z,dataset_authoring,openrouter/qwen3-235b,programmatic_variation_generation,0,0.00,Template — fill in as you spend
+2026-04-28T00:00:00Z,dataset_authoring,claude-sonnet-4-6,hard_seed_generation,0,0.00,
+2026-04-28T00:00:00Z,dataset_authoring,openrouter/qwen3-235b,judge_filter,0,0.00,
+2026-04-28T00:00:00Z,training,google_colab_t4,lora_training_run,0,0.00,Free tier
+2026-04-28T00:00:00Z,held_out_eval,claude-sonnet-4-6,ablation_delta_a,0,0.00,
+2026-04-28T00:00:00Z,held_out_eval,claude-sonnet-4-6,ablation_delta_b,0,0.00,

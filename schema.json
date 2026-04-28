@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tenacious-Bench Task Schema v0.1",
+  "description": "Schema for a single evaluation task in the Tenacious-Bench sales agent benchmark.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "source_mode",
+    "difficulty",
+    "dimension",
+    "input",
+    "candidate_output",
+    "ground_truth",
+    "rubric",
+    "metadata"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique identifier. Format: TB-{source_mode_code}-{zero_padded_number}. E.g. TB-TD-0001",
+      "pattern": "^TB-(TD|PG|MS|HA)-[0-9]{4}$"
+    },
+    "source_mode": {
+      "type": "string",
+      "enum": ["trace-derived", "programmatic", "multi-llm-synthesis", "hand-authored"],
+      "description": "How the task was created. Used for slicing analysis and reproducibility."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard", "adversarial"],
+      "description": "Difficulty tier. Adversarial reserved for hand-authored tasks targeting specific Week 10 failure modes."
+    },
+    "dimension": {
+      "type": "string",
+      "enum": [
+        "tone-preservation",
+        "signal-grounding",
+        "prospect-qualification",
+        "bench-commitment-accuracy",
+        "discovery-call-booking",
+        "objection-handling",
+        "multi-turn-coherence",
+        "cost-accuracy"
+      ],
+      "description": "The Tenacious-specific failure dimension this task evaluates."
+    },
+    "input": {
+      "type": "object",
+      "required": ["hiring_signal_brief", "bench_summary", "prospect_profile"],
+      "properties": {
+        "hiring_signal_brief": {
+          "type": "string",
+          "description": "The hiring signal brief provided to the agent as context."
+        },
+        "bench_summary": {
+          "type": "string",
+          "description": "Tenacious bench summary relevant to the prospect."
+        },
+        "prospect_profile": {
+          "type": "object",
+          "properties": {
+            "company_name": {"type": "string"},
+            "company_size": {"type": "string", "enum": ["1-10", "11-50", "51-200", "201-500", "501-2000", "2001+"]},
+            "segment": {"type": "string"},
+            "requested_headcount": {"type": "integer"},
+            "tech_stack": {"type": "array", "items": {"type": "string"}},
+            "ai_maturity_score": {"type": "number", "minimum": 1, "maximum": 5},
+            "signal_confidence": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        },
+        "prior_thread": {
+          "type": "string",
+          "description": "Optional prior email thread for multi-turn tasks."
+        }
+      }
+    },
+    "candidate_output": {
+      "type": "string",
+      "description": "The agent output to be scored. For training data: the output being evaluated. For held-out: left blank at publish time."
+    },
+    "ground_truth": {
+      "type": "object",
+      "properties": {
+        "required_signal_references": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Signal phrases that MUST appear in a correct output."
+        },
+        "banned_phrases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Phrases that MUST NOT appear (from Tenacious style guide)."
+        },
+        "required_elements": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Structural elements required (e.g. calendar_link, company_name_mention)."
+        },
+        "tone_markers": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "The five Tenacious tone markers that the LLM judge checks."
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "required": ["dimensions", "threshold", "scoring_type"],
+      "properties": {
+        "scoring_type": {
+          "type": "string",
+          "enum": ["programmatic", "llm-judge", "hybrid"],
+          "description": "hybrid = programmatic gates first, then LLM judge on passers."
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Minimum score (0-1) for a task to be considered passed.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "weight", "check_type", "description"],
+            "properties": {
+              "name": {"type": "string"},
+              "weight": {"type": "number"},
+              "check_type": {"type": "string", "enum": ["exact_match", "regex", "contains", "not_contains", "llm_score"]},
+              "description": {"type": "string"},
+              "check_value": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "week10_trace_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Week 10 trace IDs this task was derived from or inspired by."
+        },
+        "week10_probe_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Week 10 probe library IDs this task targets."
+        },
+        "synthesis_model": {
+          "type": "string",
+          "description": "LLM used to synthesize this task (if multi-llm-synthesis mode)."
+        },
+        "judge_model": {
+          "type": "string",
+          "description": "Judge model used to filter this task."
+        },
+        "judge_scores": {
+          "type": "object",
+          "properties": {
+            "input_coherence": {"type": "number", "minimum": 1, "maximum": 5},
+            "ground_truth_verifiability": {"type": "number", "minimum": 1, "maximum": 5},
+            "rubric_clarity": {"type": "number", "minimum": 1, "maximum": 5}
+          }
+        },
+        "partition": {
+          "type": "string",
+          "enum": ["train", "dev", "held_out"]
+        },
+        "created_at": {"type": "string", "format": "date-time"},
+        "seed": {"type": "integer", "description": "Random seed used during generation."}
+      }
+    }
+  },
+  "examples": [
+    {
+      "task_id": "TB-TD-0001",
+      "source_mode": "trace-derived",
+      "difficulty": "medium",
+      "dimension": "signal-grounding",
+      "input": {
+        "hiring_signal_brief": "Acme Corp posted 3 senior ML engineer roles on LinkedIn in the past 14 days. CTO quoted in TechCrunch: 'We are doubling our AI team by Q3.'",
+        "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines.",
+        "prospect_profile": {
+          "company_name": "Acme Corp",
+          "company_size": "201-500",
+          "segment": "Series B SaaS",
+          "requested_headcount": 3,
+          "tech_stack": ["Python", "PyTorch", "Kubernetes"],
+          "ai_maturity_score": 3.5,
+          "signal_confidence": 0.82
+        }
+      },
+      "candidate_output": "",
+      "ground_truth": {
+        "required_signal_references": ["ML engineer", "doubling", "Q3"],
+        "banned_phrases": ["hope this finds you well", "circle back", "touch base", "synergy"],
+        "required_elements": ["calendar_link", "company_name_mention", "specific_signal_reference"],
+        "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
+      },
+      "rubric": {
+        "scoring_type": "hybrid",
+        "threshold": 0.75,
+        "dimensions": [
+          {
+            "name": "banned_phrase_check",
+            "weight": 0.3,
+            "check_type": "not_contains",
+            "description": "Output must contain zero banned phrases from the Tenacious style guide.",
+            "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|reach out"
+          },
+          {
+            "name": "signal_reference_check",
+            "weight": 0.3,
+            "check_type": "contains",
+            "description": "Output must reference at least one specific hiring signal from the brief.",
+            "check_value": "ML engineer|doubling|Q3"
+          },
+          {
+            "name": "calendar_link_check",
+            "weight": 0.1,
+            "check_type": "regex",
+            "description": "Output must contain a calendar booking link.",
+            "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+          },
+          {
+            "name": "tone_judge",
+            "weight": 0.3,
+            "check_type": "llm_score",
+            "description": "LLM judge scores output on 5 Tenacious tone markers. Pass = average >= 4/5.",
+            "check_value": ""
+          }
+        ]
+      },
+      "metadata": {
+        "week10_trace_ids": ["trace-0023", "trace-0041"],
+        "week10_probe_ids": ["probe-007"],
+        "partition": "dev",
+        "created_at": "2026-04-28T00:00:00Z",
+        "seed": 42
+      }
+    }
+  ]
+}
