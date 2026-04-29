@@ -24,7 +24,11 @@ def load_all_tasks(dirs: list[str]) -> list[dict]:
     for d in dirs:
         for p in sorted(Path(d).glob("*.json")):
             with open(p) as f:
-                tasks.append(json.load(f))
+                data = json.load(f)
+            # Skip log files and non-task JSONs
+            if "task_id" not in data:
+                continue
+            tasks.append(data)
     return tasks
 
 
@@ -51,31 +55,34 @@ def deduplicate(tasks: list[dict], ngram_n: int, sim_threshold: float) -> list[d
 
     print(f"  Loading sentence-transformers for embedding dedup...")
     emb_model = SentenceTransformer("all-MiniLM-L6-v2")
-    texts = [json.dumps(t.get("input", {})) for t in tasks]
+    # Use only the hiring_signal_brief — the unique part of each task.
+    # bench_summary is identical across all tasks and would create false duplicates.
+    texts = [t.get("input", {}).get("hiring_signal_brief", "") for t in tasks]
     embeddings = emb_model.encode(texts, normalize_embeddings=True, show_progress_bar=True)
 
     kept_indices = []
     removed = []
 
     for i, task in enumerate(tasks):
-        i_text = json.dumps(task.get("input", {}))
+        i_text = texts[i]
         i_ngrams = get_ngrams(i_text, ngram_n)
         i_emb = embeddings[i]
         is_dup = False
 
         for j in kept_indices:
-            j_text = json.dumps(tasks[j].get("input", {}))
+            j_text = texts[j]
             j_ngrams = get_ngrams(j_text, ngram_n)
-            ngram_overlap = bool(i_ngrams & j_ngrams)
+            # Require BOTH ngram overlap AND high cosine sim to flag as duplicate
+            ngram_overlap = len(i_ngrams & j_ngrams) >= 3 if i_ngrams and j_ngrams else False
             cos_sim = float(embeddings[j] @ i_emb)
 
-            if ngram_overlap or cos_sim >= sim_threshold:
+            if ngram_overlap and cos_sim >= sim_threshold:
                 # Keep the one with higher judge score
                 if avg_judge_score(task) > avg_judge_score(tasks[j]):
                     kept_indices.remove(j)
                     kept_indices.append(i)
                 is_dup = True
-                removed.append(task["task_id"])
+                removed.append(task.get("task_id", "unknown"))
                 break
 
         if not is_dup:

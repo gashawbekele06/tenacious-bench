@@ -126,7 +126,7 @@
             "properties": {
               "name": {"type": "string"},
               "weight": {"type": "number"},
-              "check_type": {"type": "string", "enum": ["exact_match", "regex", "contains", "not_contains", "llm_score"]},
+              "check_type": {"type": "string", "enum": ["exact_match", "regex", "contains", "not_contains", "llm_score", "word_count"]},
               "description": {"type": "string"},
               "check_value": {"type": "string"}
             }

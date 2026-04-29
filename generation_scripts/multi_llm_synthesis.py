@@ -30,59 +30,55 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-FRONTIER_MODEL = "claude-sonnet-4-6"
-DEV_MODEL = "qwen/qwen3-235b-a22b"
+FRONTIER_MODEL = "claude-haiku-4-5"
+DEV_MODEL = "qwen/qwen3-8b"
 
-HARD_SEED_PROMPT = """You are an expert benchmark designer for B2B sales AI agents.
+HARD_SEED_PROMPT = """You are a benchmark designer for B2B sales AI agents.
 
-The agent being evaluated is a "Conversion Engine" for Tenacious — a staffing company that
-places pre-vetted engineers. The agent finds prospects via hiring signals, writes personalized
-outreach, and books discovery calls.
+Tenacious is a staffing company placing pre-vetted engineers. The sales agent writes outreach emails using hiring signals and books discovery calls.
 
-Known failure modes from the agent's Week 10 evaluation:
+Week 10 failure modes (pick ONE to target):
 {failure_taxonomy}
 
-Your task: Write ONE extremely hard evaluation task that specifically targets one of these failure modes.
-The task must be machine-verifiable (a script can score it without a human).
+Write ONE hard evaluation task. Keep all string values SHORT (under 30 words each).
 
-Output a JSON object with this EXACT structure:
+Output ONLY this JSON, no explanation:
 {{
-  "dimension": "<one of: tone-preservation|signal-grounding|prospect-qualification|bench-commitment-accuracy|discovery-call-booking|objection-handling|multi-turn-coherence|cost-accuracy>",
+  "dimension": "<tone-preservation|signal-grounding|prospect-qualification|bench-commitment-accuracy|discovery-call-booking|objection-handling|multi-turn-coherence|cost-accuracy>",
   "difficulty": "hard",
-  "scenario_description": "<2-3 sentences describing why this is hard>",
+  "scenario_description": "<one sentence max>",
   "input": {{
-    "hiring_signal_brief": "<realistic hiring signal>",
-    "bench_summary": "Tenacious provides pre-vetted senior engineers on 2-week deployment timelines.",
+    "hiring_signal_brief": "<signal in 20 words max>",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment.",
     "prospect_profile": {{
-      "company_name": "<realistic company name>",
-      "company_size": "<one of: 11-50|51-200|201-500|501-2000>",
-      "segment": "<segment>",
-      "requested_headcount": <integer>,
-      "ai_maturity_score": <1.0-5.0>,
-      "signal_confidence": <0.5-1.0>
+      "company_name": "<company name>",
+      "company_size": "<11-50|51-200|201-500|501-2000>",
+      "segment": "<segment label>",
+      "requested_headcount": <1-6>,
+      "ai_maturity_score": <1.0-4.0>,
+      "signal_confidence": <0.5-0.9>
     }}
   }},
   "ground_truth": {{
-    "required_signal_references": ["<exact phrase 1>", "<exact phrase 2>"],
-    "banned_phrases": ["hope this finds you well", "circle back", "touch base", "synergy"],
+    "required_signal_references": ["<phrase1>", "<phrase2>"],
+    "banned_phrases": ["hope this finds you well", "circle back", "touch base", "synergy", "leverage"],
     "required_elements": ["calendar_link", "company_name_mention"],
     "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
   }},
-  "failure_mode_targeted": "<which Week 10 failure mode this targets>"
-}}
+  "failure_mode_targeted": "<probe ID and name>"
+}}"""
 
-Output ONLY the JSON. No explanation."""
+VARIATION_PROMPT = """Given this benchmark task seed, write ONE variation by changing only:
+- The company name and company_size
+- One signal detail (different keyword or number)
+- Difficulty may stay the same or drop to "medium"
 
-VARIATION_PROMPT = """Given this hard evaluation task seed, generate {n} variations by changing:
-- The company, segment, or headcount (keep the same failure mode targeted)
-- Surface-level signal details (different keywords, different signal source)
-- Difficulty level can stay the same or drop to "medium"
+Keep all string values under 25 words. Keep the same dimension and failure_mode_targeted.
 
 Seed task:
 {seed_task}
 
-Output a JSON array of {n} task objects using the SAME structure as the seed.
-Output ONLY the JSON array. No explanation."""
+Output ONLY a single JSON object with the same structure as the seed. No array, no explanation."""
 
 JUDGE_FILTER_PROMPT = """You are a benchmark quality evaluator. Score this evaluation task on three dimensions.
 
@@ -99,6 +95,18 @@ Output JSON only: {{"input_coherence": <1-5>, "ground_truth_verifiability": <1-5
 JUDGE_THRESHOLD = {"input_coherence": 3, "ground_truth_verifiability": 4, "rubric_clarity": 3}
 
 
+def strip_fences(text: str) -> str:
+    """Strip markdown code fences that models wrap around JSON."""
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.split("\n")
+        lines = lines[1:]  # remove opening ```json or ```
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return text
+
+
 def call_anthropic(prompt: str, model: str = FRONTIER_MODEL) -> str:
     from openai import OpenAI
     client = OpenAI(
@@ -107,10 +115,10 @@ def call_anthropic(prompt: str, model: str = FRONTIER_MODEL) -> str:
     )
     response = client.chat.completions.create(
         model=f"anthropic/{model}",
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[{"role": "user", "content": prompt}],
     )
-    return response.choices[0].message.content.strip()
+    return strip_fences(response.choices[0].message.content)
 
 
 def call_openrouter(prompt: str, model: str = DEV_MODEL) -> str:
@@ -122,9 +130,9 @@ def call_openrouter(prompt: str, model: str = DEV_MODEL) -> str:
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=2048,
+        max_tokens=4096,
     )
-    return response.choices[0].message.content.strip()
+    return strip_fences(response.choices[0].message.content)
 
 
 def judge_task(task: dict, judge_fn) -> tuple[bool, dict]:
@@ -142,8 +150,15 @@ def judge_task(task: dict, judge_fn) -> tuple[bool, dict]:
 def generate_hard_seeds(failure_taxonomy_text: str, n: int, rng: random.Random) -> list[dict]:
     print(f"  Generating {n} hard seeds with {FRONTIER_MODEL}...")
     seeds = []
+    dimensions = [
+        "tone-preservation", "signal-grounding", "prospect-qualification",
+        "bench-commitment-accuracy", "discovery-call-booking", "objection-handling",
+        "multi-turn-coherence", "cost-accuracy",
+    ]
     for i in range(n):
-        prompt = HARD_SEED_PROMPT.format(failure_taxonomy=failure_taxonomy_text)
+        target_dim = dimensions[i % len(dimensions)]
+        prompt = HARD_SEED_PROMPT.format(failure_taxonomy=failure_taxonomy_text) + \
+            f'\n\nIMPORTANT: You MUST set "dimension" to "{target_dim}" for this task.'
         try:
             raw = call_anthropic(prompt)
             task = json.loads(raw)
@@ -155,7 +170,9 @@ def generate_hard_seeds(failure_taxonomy_text: str, n: int, rng: random.Random) 
             seeds.append(task)
             print(f"    Seed {i+1}/{n}: {task.get('dimension', '?')} — {task.get('difficulty', '?')}")
         except Exception as e:
-            print(f"    Seed {i+1} failed: {e}")
+            print(f"    Seed {i+1} failed: {type(e).__name__}: {e}")
+            if 'raw' in dir():
+                print(f"      Raw response preview: {raw[:120]!r}")
         time.sleep(0.5)
     return seeds
 
@@ -164,28 +181,36 @@ def generate_variations(seeds: list[dict], n_variations: int) -> list[dict]:
     print(f"  Generating {n_variations} variations per seed with {DEV_MODEL}...")
     variations = []
     for i, seed in enumerate(seeds):
-        prompt = VARIATION_PROMPT.format(seed_task=json.dumps(seed, indent=2), n=n_variations)
-        try:
-            raw = call_openrouter(prompt)
-            batch = json.loads(raw)
-            for v in batch:
-                v["source_mode"] = "multi-llm-synthesis"
-                v["metadata"] = {
-                    "synthesis_model": DEV_MODEL,
-                    "parent_seed_index": i,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                }
-            variations.extend(batch)
-            print(f"    Seed {i+1}: +{len(batch)} variations")
-        except Exception as e:
-            print(f"    Variations for seed {i+1} failed: {e}")
-        time.sleep(0.3)
+        count = 0
+        for v_idx in range(n_variations):
+            prompt = VARIATION_PROMPT.format(seed_task=json.dumps(seed, indent=2), n=1)
+            try:
+                raw = call_openrouter(prompt)
+                # Model may return a single object or a 1-element array
+                parsed = json.loads(raw)
+                if isinstance(parsed, list):
+                    parsed = parsed[0] if parsed else None
+                if parsed:
+                    parsed["source_mode"] = "multi-llm-synthesis"
+                    parsed["metadata"] = {
+                        "synthesis_model": DEV_MODEL,
+                        "parent_seed_index": i,
+                        "created_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                    variations.append(parsed)
+                    count += 1
+            except Exception as e:
+                print(f"    Variation {v_idx+1} for seed {i+1} failed: {e}")
+            time.sleep(0.2)
+        print(f"    Seed {i+1}: +{count} variations")
     return variations
 
 
 def assign_task_ids(tasks: list[dict], start: int = 1) -> list[dict]:
     for i, t in enumerate(tasks, start=start):
         t["task_id"] = f"TB-MS-{i:04d}"
+        if "candidate_output" not in t:
+            t["candidate_output"] = ""
     return tasks
 
 

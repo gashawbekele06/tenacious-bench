@@ -13,11 +13,11 @@ that existing public benchmarks (τ²-Bench, AgentBench) do not capture: tone pr
 bench commitment accuracy, and prospect qualification in the staffing domain.
 
 **Who created it and for what purpose?**  
-Created by [Your name] as part of the TRP1 cohort Week 11 project. Primary purpose: evaluation and
+Created by Gashaw (gashaw@10academy.org) as part of the TRP1 cohort Week 11 project. Primary purpose: evaluation and
 LoRA adapter training for the Tenacious Conversion Engine.
 
 **Funding / support:**  
-[Fill in — 10 Academy / self-funded]
+10 Academy TRP1 program.
 
 ---
 
@@ -29,29 +29,35 @@ bench summary, and company profile. The agent must produce a personalized outrea
 programmatic and LLM-judge quality checks.
 
 **How many instances?**  
-Total: [N] tasks — [N_train] train, [N_dev] dev, [N_held_out] held-out.
+Total: 250 tasks — 233 train, 14 dev, 3 held-out.
+
+> **Note (v0.1 limitation):** The multi-LLM synthesis stage generated variation tasks from 20 seed scenarios.
+> Most variations share nearly identical hiring signals, which caused 48/51 initial held-out candidates to fail
+> the ≥0.90 cosine contamination check. The held-out partition (3 tasks) is intentionally small for v0.1.
+> v0.2 will seed held-out tasks from entirely disjoint prospect profiles.
 
 **Dimension breakdown (Microscopic):**
 
 | Dimension | Train | Dev | Held-out | Total |
 |-----------|-------|-----|----------|-------|
-| tone-preservation | | | | |
-| signal-grounding | | | | |
-| prospect-qualification | | | | |
-| bench-commitment-accuracy | | | | |
-| discovery-call-booking | | | | |
-| objection-handling | | | | |
-| multi-turn-coherence | | | | |
-| cost-accuracy | | | | |
+| tone-preservation | 23 | 2 | 0 | 25 |
+| signal-grounding | 72 | 2 | 0 | 74 |
+| prospect-qualification | 51 | 2 | 0 | 53 |
+| bench-commitment-accuracy | 28 | 1 | 1 | 30 |
+| discovery-call-booking | 14 | 1 | 1 | 16 |
+| objection-handling | 27 | 3 | 0 | 30 |
+| multi-turn-coherence | 8 | 2 | 1 | 11 |
+| cost-accuracy | 10 | 1 | 0 | 11 |
+| **Total** | **233** | **14** | **3** | **250** |
 
 **Source mode breakdown:**
 
 | Mode | Count | % |
 |------|-------|---|
-| Trace-derived | | |
-| Programmatic | | |
-| Multi-LLM synthesis | | |
-| Hand-authored adversarial | | |
+| Trace-derived | 71 | 28.4% |
+| Programmatic | 70 | 28.0% |
+| Multi-LLM synthesis | 99 | 39.6% |
+| Hand-authored adversarial | 10 | 4.0% |
 
 **Is any information missing?**  
 Candidate outputs are left blank in the dev and held-out partitions. Ground truth for the held-out
@@ -73,7 +79,7 @@ adversarial tasks written by the dataset author.
 [Your name], with LLM assistance from Claude Sonnet 4.6 (Anthropic) and Qwen models (OpenRouter).
 
 **Timeframe:**  
-[Date range of collection]
+2026-04-27 to 2026-04-28 (Week 11 sprint)
 
 **Ethical considerations:**  
 All prospect profiles are synthetic. Company names, contact details, and hiring signals are
@@ -87,7 +93,7 @@ fabricated or derived from public domain signals only. No personally identifiabl
 1. PII redaction in trace-derived tasks (`generation_scripts/trace_derived.py`)
 2. LLM-as-a-judge quality filter: all tasks scored on 3 dimensions, threshold per dimension documented
 3. Deduplication: 6-gram overlap and cosine similarity < 0.90 (`generation_scripts/dedup.py`)
-4. Contamination check: 8-gram, embedding (0.85), time-shift (`contamination_check.py`)
+4. Contamination check: 8-gram (≥3 overlaps), embedding (≥0.90 cosine), time-shift (`contamination_check.py`) — all passed
 5. Inter-rater agreement check on 30-task subset
 
 **Raw data availability:**  

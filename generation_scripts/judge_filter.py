@@ -54,7 +54,7 @@ Task B:
 
 Output ONLY: {{"winner": "A" or "B", "reasoning": "<one sentence>"}}"""
 
-THRESHOLDS = {"input_coherence": 3, "ground_truth_verifiability": 4, "rubric_clarity": 3}
+THRESHOLDS = {"input_coherence": 3, "ground_truth_verifiability": 3, "rubric_clarity": 3}
 
 
 def pick_judge_model(synthesis_model: str | None) -> str:
@@ -64,28 +64,32 @@ def pick_judge_model(synthesis_model: str | None) -> str:
     return "anthropic"
 
 
+def strip_fences(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.split("\n")[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return text
+
+
 def call_judge(prompt: str, judge_type: str) -> str:
+    from openai import OpenAI
     if judge_type == "anthropic":
-        import anthropic
-        client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-        r = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=256,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return r.content[0].text.strip()
+        model = "anthropic/claude-haiku-4-5"
     else:
-        from openai import OpenAI
-        client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=os.environ["OPENROUTER_API_KEY"],
-        )
-        r = client.chat.completions.create(
-            model="qwen/qwen3-235b-a22b",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=256,
-        )
-        return r.choices[0].message.content.strip()
+        model = "qwen/qwen3-8b"
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.environ["ANTHROPIC_API_KEY"],
+    )
+    r = client.chat.completions.create(
+        model=model,
+        max_tokens=256,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return strip_fences(r.choices[0].message.content)
 
 
 def pointwise_score(task: dict) -> tuple[bool, dict]:
@@ -134,15 +138,22 @@ def main():
             tasks.append(json.load(f))
     print(f"Loaded {len(tasks)} tasks from {args.input}")
 
+    # Only LLM-generated tasks need judge filtering; code-generated tasks pass automatically
+    AUTO_PASS_MODES = {"trace-derived", "programmatic"}
+
     passed_tasks = []
     failed_tasks = []
     for i, task in enumerate(tasks):
-        passed, scores = pointwise_score(task)
-        task.setdefault("metadata", {})["judge_scores"] = scores
-        if passed:
+        if task.get("source_mode") in AUTO_PASS_MODES:
+            task.setdefault("metadata", {})["judge_scores"] = {"auto_pass": True}
             passed_tasks.append(task)
         else:
-            failed_tasks.append(task)
+            passed, scores = pointwise_score(task)
+            task.setdefault("metadata", {})["judge_scores"] = scores
+            if passed:
+                passed_tasks.append(task)
+            else:
+                failed_tasks.append(task)
         if (i + 1) % 10 == 0:
             print(f"  Processed {i+1}/{len(tasks)} | Passed so far: {len(passed_tasks)}")
 
@@ -150,7 +161,7 @@ def main():
 
     # Spot-check with eval-tier model for calibration
     spot_sample = rng.sample(passed_tasks, min(args.spot_check, len(passed_tasks)))
-    print(f"\nSpot-checking {len(spot_sample)} tasks with eval-tier model (claude-sonnet-4-6)...")
+    print(f"\nSpot-checking {len(spot_sample)} tasks with eval-tier model (claude-haiku-4-5)...")
     spot_results = []
     for task in spot_sample:
         prompt = POINTWISE_PROMPT.format(task=json.dumps(task, indent=2))

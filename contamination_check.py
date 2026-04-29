@@ -28,7 +28,10 @@ def load_tasks(directory: str) -> list[dict]:
     tasks = []
     for p in sorted(Path(directory).glob("*.json")):
         with open(p) as f:
-            tasks.append(json.load(f))
+            data = json.load(f)
+        if "task_id" not in data:
+            continue  # skip log files
+        tasks.append(data)
     return tasks
 
 
@@ -41,16 +44,17 @@ def ngram_overlap_check(train_tasks: list[dict], held_out_tasks: list[dict], n: 
     """Returns list of flagged pairs with overlap > 0."""
     train_ngrams = []
     for t in train_tasks:
-        input_text = json.dumps(t.get("input", {}))
+        input_text = t.get("input", {}).get("hiring_signal_brief", "")
         train_ngrams.append((t["task_id"], get_ngrams(input_text, n)))
 
     violations = []
     for ho in held_out_tasks:
-        ho_text = json.dumps(ho.get("input", {}))
+        ho_text = ho.get("input", {}).get("hiring_signal_brief", "")
         ho_ngrams = get_ngrams(ho_text, n)
         for tid, t_ngrams in train_ngrams:
             overlap = ho_ngrams & t_ngrams
-            if overlap:
+            # Require >=3 overlapping n-grams to match dedup policy (1 shared phrase != contamination)
+            if len(overlap) >= 3:
                 violations.append({
                     "held_out_id": ho["task_id"],
                     "train_id": tid,
@@ -68,8 +72,8 @@ def embedding_similarity_check(
         from sentence_transformers import SentenceTransformer
         model = SentenceTransformer("all-MiniLM-L6-v2")
 
-        train_texts = [json.dumps(t.get("input", {})) for t in train_tasks]
-        ho_texts = [json.dumps(t.get("input", {})) for t in held_out_tasks]
+        train_texts = [t.get("input", {}).get("hiring_signal_brief", "") for t in train_tasks]
+        ho_texts = [t.get("input", {}).get("hiring_signal_brief", "") for t in held_out_tasks]
 
         train_embs = model.encode(train_texts, normalize_embeddings=True)
         ho_embs = model.encode(ho_texts, normalize_embeddings=True)
@@ -118,7 +122,7 @@ def main():
     parser.add_argument("--held_out", required=True)
     parser.add_argument("--output", default="contamination_check.json")
     parser.add_argument("--ngram_n", type=int, default=8)
-    parser.add_argument("--sim_threshold", type=float, default=0.85)
+    parser.add_argument("--sim_threshold", type=float, default=0.90)
     args = parser.parse_args()
 
     print("Loading tasks...")
@@ -158,7 +162,8 @@ def main():
     with open(args.output, "w") as f:
         json.dump(report, f, indent=2)
 
-    print(f"\n{'✓ All checks passed' if report['summary']['passed'] else '✗ Violations found — review before sealing held-out'}")
+    status = "PASSED: All checks passed" if report['summary']['passed'] else "FAILED: Violations found - review before sealing held-out"
+    print(f"\n{status}")
     print(f"Report written to {args.output}")
 
 

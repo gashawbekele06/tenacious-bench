@@ -17,7 +17,7 @@ import jsonschema
 
 
 def load_schema(schema_path: str = "schema.json") -> dict:
-    with open(schema_path) as f:
+    with open(schema_path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -53,7 +53,7 @@ def main():
         print(f"Example {args.example}: VALID")
 
     elif args.task:
-        with open(args.task) as f:
+        with open(args.task, encoding="utf-8") as f:
             task = json.load(f)
         errors = validate_task(task, schema)
         if errors:
@@ -65,8 +65,10 @@ def main():
         files = sorted(Path(args.dir).glob("*.json"))
         passed, failed = 0, 0
         for p in files:
-            with open(p) as f:
+            with open(p, encoding="utf-8") as f:
                 task = json.load(f)
+            if "task_id" not in task:
+                continue  # skip log files
             errors = validate_task(task, schema)
             if errors:
                 print(f"FAIL {p.name}: {errors[0]}")

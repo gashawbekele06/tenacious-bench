@@ -62,23 +62,45 @@ def check_exact_match(text: str, value: str) -> tuple[bool, str]:
 # LLM judge
 # ---------------------------------------------------------------------------
 
-TONE_JUDGE_PROMPT = """You are an expert evaluator for B2B sales outreach quality.
+# Exact 5-marker framework from Tenacious Style Guide v2.
+# Each marker scored 1-5. Pass = every marker >= 4. Fail on any = regenerate.
+TONE_JUDGE_PROMPT = """You are a tone evaluator for Tenacious Intelligence Corporation B2B sales outreach.
 
-You will score the following email/outreach draft on the 5 Tenacious tone markers.
-Score each marker 1-5 (5 = excellent).
+Score the draft below on the five Tenacious tone markers (1-5 each).
+Pass threshold per marker: 4. A draft below 4 on any marker fails.
 
-Tone markers:
-1. direct — Gets to the point without filler phrases
-2. evidence-based — Grounds claims in specific signals or data
-3. specific — Names specific details from the prospect's context
-4. low-pressure — Does not push or use urgency tactics
-5. competence-signaling — Demonstrates domain expertise without bragging
+MARKER DEFINITIONS:
 
-Output a JSON object with this exact structure (no other text):
-{{"direct": <1-5>, "evidence_based": <1-5>, "specific": <1-5>, "low_pressure": <1-5>, "competence_signaling": <1-5>, "reasoning": "<one sentence>"}}
+1. direct (1-5)
+   5 = subject states intent ("Request:", "Context:", "Question:"); body has one clear ask; no filler.
+   3 = one minor filler or vague ask.
+   1 = "Quick/Just/Hey" subject; multi-paragraph self-intro; 2+ asks stacked; exceeds word limit.
+
+2. grounded (1-5)
+   5 = at least one specific signal named (funding amount+date, exact role count+trend, named layoff, named leadership change+date); phrasing matches signal confidence.
+   3 = vague signal reference ("I see you are hiring") without specifics.
+   1 = no signal referenced, OR "aggressive hiring" asserted on a signal with <3 open roles.
+
+3. honest (1-5)
+   5 = names what is unknown; uses interrogative phrasing for low-confidence signals; refuses to commit bench capacity or pricing not supported by brief.
+   3 = minor overstatement of certainty.
+   1 = asserts unsupported claims; commits capacity beyond brief; invents pricing or discount; fabricates peer data.
+
+4. professional (1-5)
+   5 = no banned phrases; "bench" does not appear externally; language calibrated to CTO/founder reader.
+   3 = borderline jargon but no banned phrase.
+   1 = any banned phrase present ("world-class", "top talent", "synergy", "leverage", "skyrocket", etc.); OR "bench" used in prospect-facing text; OR offshore clichés.
+
+5. non_condescending (1-5)
+   5 = any competitor or capability gap framed as a research finding or question; explicit acknowledgment that prospect may have already considered it.
+   3 = neutral framing but no acknowledgment.
+   1 = "falling behind," "behind the curve," "catch up," "you need to," "you should"; gap framed as prospect's leadership failure.
+
+Output ONLY this JSON (no other text):
+{{"direct": <1-5>, "grounded": <1-5>, "honest": <1-5>, "professional": <1-5>, "non_condescending": <1-5>, "reasoning": "<one sentence identifying the strongest and weakest marker>"}}
 
 ---
-OUTREACH DRAFT:
+OUTREACH DRAFT TO SCORE:
 {output}
 ---
 """
@@ -95,7 +117,7 @@ def llm_judge_score(candidate_output: str, model: str | None = None) -> dict[str
         used_model = model or "anthropic/claude-haiku-4-5"
         response = client.chat.completions.create(
             model=used_model,
-            max_tokens=256,
+            max_tokens=300,
             messages=[{"role": "user", "content": TONE_JUDGE_PROMPT.format(output=candidate_output)}],
         )
         raw = response.choices[0].message.content.strip()
@@ -105,12 +127,27 @@ def llm_judge_score(candidate_output: str, model: str | None = None) -> dict[str
                 raw = raw[4:]
             raw = raw.strip()
         scores = json.loads(raw)
-        avg = sum(v for k, v in scores.items() if k != "reasoning") / 5
+        marker_keys = ["direct", "grounded", "honest", "professional", "non_condescending"]
+        marker_scores = [scores[k] for k in marker_keys if k in scores]
+        avg = sum(marker_scores) / len(marker_scores) if marker_scores else 0.0
+        # Pass = average >= 4.0 across all five markers (Style Guide threshold)
         scores["average"] = round(avg, 2)
         scores["passed"] = avg >= 4.0
         return scores
     except Exception as e:
         return {"error": str(e), "passed": False, "average": 0.0}
+
+
+# ---------------------------------------------------------------------------
+# Word count check
+# ---------------------------------------------------------------------------
+
+def check_word_count(text: str, max_words: int) -> tuple[bool, str]:
+    """Returns (passed, reason). Passed = word count <= max_words."""
+    count = len(text.split())
+    if count > max_words:
+        return False, f"Word count {count} exceeds limit of {max_words}"
+    return True, f"Word count {count} within limit of {max_words}"
 
 
 # ---------------------------------------------------------------------------
@@ -141,6 +178,12 @@ def score_task(task: dict, candidate_output: str, judge_model: str | None = None
             passed, reason = check_regex(candidate_output, check_value)
         elif check_type == "exact_match":
             passed, reason = check_exact_match(candidate_output, check_value)
+        elif check_type == "word_count":
+            # check_value is the max word count as a string (e.g. "120" for cold outreach)
+            try:
+                passed, reason = check_word_count(candidate_output, int(check_value))
+            except ValueError:
+                passed, reason = False, f"Invalid word_count check_value: {check_value!r}"
         elif check_type == "llm_score":
             if rubric["scoring_type"] in ("hybrid", "llm-judge"):
                 judge_result = llm_judge_score(candidate_output, judge_model)
