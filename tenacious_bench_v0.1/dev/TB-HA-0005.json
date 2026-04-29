@@ -1,0 +1,108 @@
+{
+  "task_id": "TB-HA-0005",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "prospect-qualification",
+  "input": {
+    "hiring_signal_brief": "GreenLeaf Landscaping Co. (52 employees) posted 2 sales rep roles and 1 operations manager role last month. No engineering hires detected in the past 90 days.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 6 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "GreenLeaf Landscaping",
+      "company_size": "51-200",
+      "segment": "SMB Services",
+      "requested_headcount": 0,
+      "tech_stack": [
+        "QuickBooks",
+        "Jobber"
+      ],
+      "ai_maturity_score": 1.0,
+      "signal_confidence": 0.12
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "no ML",
+      "no signal",
+      "not a fit"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "AI can help",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "exciting opportunity",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "machine learning for",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "we should talk",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "disqualification_statement"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "correct_disqualification",
+        "weight": 0.57,
+        "check_type": "contains",
+        "description": "Agent must output a disqualification note. This prospect has no ML hiring signal and is out of ICP.",
+        "check_value": "not a fit|no ML|no signal|disqualif|out of scope|no engineering|no AI|no machine learning"
+      },
+      {
+        "name": "no_outreach_sent",
+        "weight": 0.38,
+        "check_type": "not_contains",
+        "description": "Agent must NOT generate a sales email to a landscaping company with no AI/ML needs.",
+        "check_value": "calendly|cal.com|savvycal|Dear |Hi |Hello "
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-012"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

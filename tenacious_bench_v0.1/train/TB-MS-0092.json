@@ -1,0 +1,129 @@
+{
+  "dimension": "signal-grounding",
+  "difficulty": "medium",
+  "scenario_description": "Agent pitches AI infrastructure gap to Series B fintech with 2-company peer set and job-description-only LLM evidence.",
+  "input": {
+    "hiring_signal_brief": "Series B fintech, 6-month hiring velocity +180%, LLM in job description, AI maturity 2.5.",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment.",
+    "prospect_profile": {
+      "company_name": "NexaFin Tech",
+      "company_size": "201-500",
+      "segment": "4",
+      "requested_headcount": 3,
+      "ai_maturity_score": 2.5,
+      "signal_confidence": 0.58
+    }
+  },
+  "ground_truth": {
+    "required_signal_references": [
+      "peer_count=2 insufficient for trend claim"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best practice",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "gap is widening",
+      "hope this finds you well",
+      "just following up",
+      "leading indicator",
+      "leverage",
+      "most companies in fintech",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "vLLM in production",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "peer_count disclosed or suppressed",
+      "no percentile claim",
+      "no sector-trend assertion"
+    ],
+    "tone_markers": [
+      "hedged",
+      "data-humble",
+      "observation-only",
+      "no prescriptive",
+      "question-inviting"
+    ]
+  },
+  "failure_mode_targeted": "P-028 Gap over-claiming on thin sector (peer_count < 3)",
+  "source_mode": "multi-llm-synthesis",
+  "metadata": {
+    "synthesis_model": "qwen/qwen3-8b",
+    "parent_seed_index": 17,
+    "created_at": "2026-04-29T07:35:43.138183+00:00",
+    "judge_scores": {
+      "input_coherence": 4,
+      "ground_truth_verifiability": 3,
+      "rubric_clarity": 3,
+      "reasoning": "Scenario is realistic and internally consistent (Series B fintech, hiring velocity, AI maturity score align), but ground_truth tone_markers are subjective and not programmatically verifiable, and rubric mixes objective checks (regex, string match) with subjective LLM judgment, creating ambiguity in pass/fail application.",
+      "judge_type": "anthropic"
+    },
+    "judge_model": "qwen/qwen3-8b",
+    "partition": "train",
+    "seed": 42
+  },
+  "task_id": "TB-MS-0092",
+  "candidate_output": "",
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "gap is widening|leading indicator|most companies in fintech|best practice|vllm in production|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "peer_count=2 insufficient for trend claim"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  }
+}

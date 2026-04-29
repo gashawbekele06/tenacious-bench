@@ -1,0 +1,129 @@
+{
+  "dimension": "prospect-qualification",
+  "difficulty": "hard",
+  "scenario_description": "Agent must reject a Segment 4 pitch when peer_count=1, avoiding gap over-claiming on thin sector data.",
+  "input": {
+    "hiring_signal_brief": "Series B fintech, 40 engineers, no vLLM deployment detected. Peer count: 1.",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment.",
+    "prospect_profile": {
+      "company_name": "NexGen Analytics",
+      "company_size": "11-50",
+      "segment": "4",
+      "requested_headcount": 3,
+      "ai_maturity_score": 1.6,
+      "signal_confidence": 0.62
+    }
+  },
+  "ground_truth": {
+    "required_signal_references": [
+      "peer_count below threshold",
+      "insufficient sector sample"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best practice",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "competitors ahead",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "most companies",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "three-company trend",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret",
+      "your sector lags"
+    ],
+    "required_elements": [
+      "explicit peer_count disclosure",
+      "hedge or suppress gap claim",
+      "redirect to discovery"
+    ],
+    "tone_markers": [
+      "honest",
+      "research-grounded",
+      "sample-size-aware",
+      "collaborative",
+      "no condescension"
+    ]
+  },
+  "failure_mode_targeted": "P-028 Gap over-claiming on peer_count < 3",
+  "source_mode": "multi-llm-synthesis",
+  "metadata": {
+    "synthesis_model": "qwen/qwen3-8b",
+    "parent_seed_index": 2,
+    "created_at": "2026-04-29T07:11:15.016097+00:00",
+    "judge_scores": {
+      "input_coherence": 5,
+      "ground_truth_verifiability": 4,
+      "rubric_clarity": 5,
+      "reasoning": "The scenario is realistic and consistent, ground truth elements are specific but some subjective criteria (tone) may introduce ambiguity, and the rubric clearly defines correct/incorrect response markers."
+    },
+    "judge_model": "qwen/qwen3-8b",
+    "partition": "train",
+    "seed": 42
+  },
+  "task_id": "TB-MS-0029",
+  "candidate_output": "",
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "most companies|three-company trend|competitors ahead|your sector lags|best practice|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "peer_count below threshold|insufficient sector sample"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  }
+}

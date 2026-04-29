@@ -29,6 +29,16 @@ tenacious_bench_v0.1/held_out/*.jsonl
 tenacious_bench_v0.1/held_out/*.json
 !tenacious_bench_v0.1/held_out/.gitkeep
 
+# Intermediate pipeline artifacts (not final dataset)
+tenacious_bench_v0.1/deduped/
+tenacious_bench_v0.1/train_filtered/
+
+# Training data (formatted pairs for fine-tuning — push to HuggingFace separately)
+training_data/
+
+# Test output sinks
+email_sink.jsonl
+
 # API keys / secrets
 *.key
 secrets/

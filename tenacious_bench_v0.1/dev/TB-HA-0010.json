@@ -1,0 +1,125 @@
+{
+  "task_id": "TB-HA-0010",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "objection-handling",
+  "input": {
+    "hiring_signal_brief": "Cortex AI Labs posted 6 ML engineer roles 21 days ago. $40M Series B closed 90 days ago.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 5 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "Cortex AI Labs",
+      "company_size": "51-200",
+      "segment": "Series B AI",
+      "requested_headcount": 6,
+      "tech_stack": [
+        "Python",
+        "JAX",
+        "Kubernetes",
+        "Ray"
+      ],
+      "ai_maturity_score": 4.2,
+      "signal_confidence": 0.89
+    },
+    "prior_thread": "Turn 1 (agent): Referenced Cortex AI ML hiring surge and $40M raise. Offered 5 pre-vetted engineers on 2-week timeline.\n\nTurn 2 (prospect reply): Thanks. We actually just closed 4 offers this week. We are good for now."
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "2 remaining",
+      "future",
+      "pipeline"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "completely understand",
+      "congratulations",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "I hear you",
+      "I understand completely",
+      "just following up",
+      "leverage",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "that is great news",
+      "top talent",
+      "touch base",
+      "we understand your concern",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "acknowledge_objection",
+      "open_future_door",
+      "no_pressure"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_generic_acknowledgment",
+        "weight": 0.25,
+        "check_type": "not_contains",
+        "description": "Agent must NOT use hollow validation phrases.",
+        "check_value": "completely understand|i hear you|that is great news|we understand your concern|congratulations on|i understand completely|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "remaining_need_reference",
+        "weight": 0.35,
+        "check_type": "contains",
+        "description": "Prospect filled 4 of 6 roles — 2 still open. Agent should reference remaining headcount or future pipeline.",
+        "check_value": "2 remaining|still have|two more|remaining roles|pipeline|future need|future hire|next round"
+      },
+      {
+        "name": "low_pressure_close",
+        "weight": 0.25,
+        "check_type": "contains",
+        "description": "Agent must leave the door open without pressure.",
+        "check_value": "when you are ready|no rush|future|next time|keep in touch|happy to reconnect|bench is available"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.15,
+        "check_type": "llm_score",
+        "description": "LLM judge verifies low-pressure handling. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-011",
+      "P-010"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

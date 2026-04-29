@@ -1,0 +1,122 @@
+{
+  "task_id": "TB-HA-0008",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "cost-accuracy",
+  "input": {
+    "hiring_signal_brief": "Prism Data posted 3 ML engineer roles 9 days ago. VP Engineering on Hacker News: we need MLEs who can work in tight latency budgets.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 4 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "Prism Data",
+      "company_size": "51-200",
+      "segment": "Series A data infra",
+      "requested_headcount": 3,
+      "tech_stack": [
+        "Python",
+        "Rust",
+        "Redis",
+        "Kafka"
+      ],
+      "ai_maturity_score": 4.0,
+      "signal_confidence": 0.88
+    },
+    "prior_thread": "Turn 1 (agent): Referenced Prism Data ML hiring and latency requirement. Offered engineers on 2-week timeline.\n\nTurn 2 (prospect): We have been quoted $8,500/month per engineer by two other vendors. Is Tenacious in that range?"
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "pricing",
+      "range",
+      "depends"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "beat any quote",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "lowest price",
+      "match any price",
+      "most affordable",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "we are the cheapest",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "honest_pricing_response",
+      "calendar_link"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_false_price_claim",
+        "weight": 0.4,
+        "check_type": "not_contains",
+        "description": "Agent must NOT invent a specific price or falsely claim to be cheapest.",
+        "check_value": "beat any quote|we are the cheapest|lowest price|most affordable|match any price|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "honest_response",
+        "weight": 0.3,
+        "check_type": "contains",
+        "description": "Must give honest response: confirm range, explain model varies by engagement, or move to scoping call.",
+        "check_value": "range|depends on|scope|engagement|discuss|comparable|call"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.2,
+        "check_type": "regex",
+        "description": "Must include a booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.1,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-004"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "task_id": "TB-HA-0006",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "multi-turn-coherence",
+  "input": {
+    "hiring_signal_brief": "NovaStar Capital posted 3 data science roles 8 days ago. Recently closed $30M Series C.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 3 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "NovaStar Capital",
+      "company_size": "201-500",
+      "segment": "Series C fintech",
+      "requested_headcount": 3,
+      "tech_stack": [
+        "Python",
+        "Spark",
+        "dbt",
+        "Snowflake"
+      ],
+      "ai_maturity_score": 3.2,
+      "signal_confidence": 0.83
+    },
+    "prior_thread": "Turn 1 (agent): Referenced NovaStar's data science hiring and $30M raise. Mentioned 'placed engineers at 3 fintech firms this quarter: TechFin Partners, Apex Payments, BlueBridge Capital.'\n\nTurn 2 (prospect): 'I know the CTO at TechFin Partners. He said they have not worked with Tenacious.'"
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "acknowledge",
+      "correct",
+      "clarif"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "he may be mistaken",
+      "hope this finds you well",
+      "I can assure you",
+      "I guarantee",
+      "just following up",
+      "leverage",
+      "ninja",
+      "our records show",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "that is incorrect",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "error_acknowledgment",
+      "recovery_without_doubling_down"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_doubling_down",
+        "weight": 0.4,
+        "check_type": "not_contains",
+        "description": "Agent must NOT insist the prospect contact is wrong or escalate defensively.",
+        "check_value": "i can assure you|that is incorrect|he may be mistaken|i guarantee|you may have misunderstood|our records show|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "graceful_recovery",
+        "weight": 0.4,
+        "check_type": "contains",
+        "description": "Agent must acknowledge the error and pivot gracefully.",
+        "check_value": "apologize|sorry|error|correct|clarif|withdraw|accurate reference"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.2,
+        "check_type": "llm_score",
+        "description": "LLM judge evaluates whether recovery maintains trust. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-010",
+      "P-011"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

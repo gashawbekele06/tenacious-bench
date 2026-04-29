@@ -11,67 +11,107 @@
       "company_size": "51-200",
       "segment": "Series B fintech",
       "requested_headcount": 4,
-      "tech_stack": ["Python", "Spark", "Airflow", "dbt"],
+      "tech_stack": [
+        "Python",
+        "Spark",
+        "Airflow",
+        "dbt"
+      ],
       "ai_maturity_score": 3.0,
       "signal_confidence": 0.71
     },
-    "prior_thread": "Turn 1 (agent): Referenced ClearStake's ML hiring surge and $22M raise. Offered Tenacious ML engineers on 2-week timeline.\n\nTurn 2 (prospect reply): 'We have had bad experiences with offshore development teams before — timezone issues and code quality problems. Not sure this is a fit.'"
+    "prior_thread": "Turn 1 (agent): Referenced ClearStake's ML hiring surge and $22M raise. Offered Tenacious ML engineers on 2-week timeline.\n\nTurn 2 (prospect reply): 'We have had bad experiences with offshore development teams before â€” timezone issues and code quality problems. Not sure this is a fit.'"
   },
   "candidate_output": "",
   "ground_truth": {
-    "required_signal_references": ["2-week", "pre-vetted", "ML"],
-    "banned_phrases": [
-      "just as good as in-house",
-      "guarantee quality",
-      "offshore is not",
-      "we understand your concern",
-      "completely understand",
-      "I hear you",
-      "hope this finds you well",
-      "best-in-class",
-      "world-class",
-      "top talent",
-      "synergy",
-      "leverage"
+    "required_signal_references": [
+      "2-week",
+      "pre-vetted",
+      "ML"
     ],
-    "required_elements": ["specific_outcome_or_metric", "calendar_link"],
-    "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "completely understand",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "guarantee quality",
+      "hope this finds you well",
+      "I hear you",
+      "just as good as in-house",
+      "just following up",
+      "leverage",
+      "ninja",
+      "offshore is not",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "we understand your concern",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "specific_outcome_or_metric",
+      "calendar_link"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
   },
   "rubric": {
     "scoring_type": "hybrid",
-    "threshold": 0.80,
+    "threshold": 0.8,
     "dimensions": [
       {
         "name": "no_defensive_language",
-        "weight": 0.30,
+        "weight": 0.3,
         "check_type": "not_contains",
         "description": "Must NOT use generic defensive reassurance phrases. These phrases indicate the agent failed to handle the objection with specific evidence.",
-        "check_value": "just as good as in-house|guarantee quality|offshore is not|we understand your concern|completely understand|I hear you|best-in-class|world-class|top talent|synergy|leverage"
+        "check_value": "top talent|synergy|best-in-class|leverage|i hear you|guarantee quality|we understand your concern|offshore is not|world-class|completely understand|just as good as in-house|hope this finds you well|just following up|circling back|circle back|touch base|synergize|ecosystem|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
       },
       {
         "name": "specific_evidence_check",
-        "weight": 0.30,
+        "weight": 0.3,
         "check_type": "contains",
-        "description": "Must reference a specific Tenacious outcome — a metric, timeline, or client result — not a generic claim.",
+        "description": "Must reference a specific Tenacious outcome â€” a metric, timeline, or client result â€” not a generic claim.",
         "check_value": "2-week|pre-vetted|placed|deployed|within"
       },
       {
         "name": "signal_reference_check",
-        "weight": 0.20,
+        "weight": 0.2,
         "check_type": "contains",
-        "description": "Must reference the ML hiring signal from the brief — grounding the response in their specific context, not a generic objection reply.",
+        "description": "Must reference the ML hiring signal from the brief â€” grounding the response in their specific context, not a generic objection reply.",
         "check_value": "ML|machine learning|AI infrastructure|Series B"
       },
       {
         "name": "calendar_link_check",
-        "weight": 0.10,
+        "weight": 0.1,
         "check_type": "regex",
         "description": "Output must contain a calendar booking link.",
         "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
       },
       {
         "name": "tone_judge",
-        "weight": 0.10,
+        "weight": 0.1,
         "check_type": "llm_score",
         "description": "LLM judge scores on 5 tone markers. Pass = average >= 4/5. Particularly checks low-pressure and evidence-based.",
         "check_value": ""
@@ -79,8 +119,15 @@
     ]
   },
   "metadata": {
-    "week10_trace_ids": ["tr_sim_6beaf527", "89337dd7-bb36-41d7-8530-190df8734cc3"],
-    "week10_probe_ids": ["P-011", "P-010", "P-012"],
+    "week10_trace_ids": [
+      "tr_sim_6beaf527",
+      "89337dd7-bb36-41d7-8530-190df8734cc3"
+    ],
+    "week10_probe_ids": [
+      "P-011",
+      "P-010",
+      "P-012"
+    ],
     "partition": "dev",
     "created_at": "2026-04-28T00:00:00Z",
     "seed": 42

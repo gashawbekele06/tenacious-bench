@@ -1,0 +1,120 @@
+{
+  "task_id": "TB-HA-0001",
+  "source_mode": "hand-authored",
+  "difficulty": "easy",
+  "dimension": "tone-preservation",
+  "input": {
+    "hiring_signal_brief": "Vantage Pay posted 5 senior backend engineer roles on LinkedIn over the last 7 days. All roles require Node.js and PostgreSQL experience.",
+    "bench_summary": "Tenacious provides pre-vetted senior backend engineers on 2-week deployment timelines. Current bench: 4 Node.js engineers available.",
+    "prospect_profile": {
+      "company_name": "Vantage Pay",
+      "company_size": "51-200",
+      "segment": "Series A fintech",
+      "requested_headcount": 2,
+      "tech_stack": [
+        "Node.js",
+        "PostgreSQL",
+        "AWS"
+      ],
+      "ai_maturity_score": 2.0,
+      "signal_confidence": 0.87
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "Node.js",
+      "backend engineer",
+      "Vantage Pay"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "end-to-end",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "just wanted to",
+      "leverage",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "programmatic",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.475,
+        "check_type": "not_contains",
+        "description": "Output must contain zero banned phrases from the Tenacious style guide.",
+        "check_value": "end-to-end|circle back|hope this finds you well|best-in-class|just wanted to|leverage|reach out|touch base|synergy|just following up|circling back|synergize|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Output must reference the Node.js hiring signal from the brief.",
+        "check_value": "Node.js|backend engineer|Vantage Pay"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.19,
+        "check_type": "regex",
+        "description": "Output must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [
+      "tr_sim_6beaf527"
+    ],
+    "week10_probe_ids": [
+      "P-010",
+      "P-011"
+    ],
+    "partition": "train",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

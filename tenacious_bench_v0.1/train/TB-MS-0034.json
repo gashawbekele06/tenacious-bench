@@ -1,0 +1,129 @@
+{
+  "dimension": "bench-commitment-accuracy",
+  "difficulty": "hard",
+  "scenario_description": "Agent must compose outreach to Series B healthtech (201-500 engineers) requesting 3 ML specialists, but bench has only 1 ML available in 14-day window.",
+  "input": {
+    "hiring_signal_brief": "Hired VP ML last month, GitHub shows 5 new repos for AI model optimization.",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment.",
+    "prospect_profile": {
+      "company_name": "NexaTech Solutions",
+      "company_size": "201-500",
+      "segment": "2",
+      "requested_headcount": 3,
+      "ai_maturity_score": 3.5,
+      "signal_confidence": 0.72
+    }
+  },
+  "ground_truth": {
+    "required_signal_references": [
+      "VP ML hire",
+      "AI model optimization"
+    ],
+    "banned_phrases": [
+      "4 specialists ready now",
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "end-to-end excellence",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "leverage talent",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "we can immediately fulfill",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention",
+      "capacity_caveat_on_ml_headcount",
+      "no_overcommitment"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "honest_about_constraints",
+      "competence-signaling"
+    ]
+  },
+  "failure_mode_targeted": "P-007 ML capacity beyond bench (bench_over_commitment)",
+  "source_mode": "multi-llm-synthesis",
+  "metadata": {
+    "synthesis_model": "qwen/qwen3-8b",
+    "parent_seed_index": 3,
+    "created_at": "2026-04-29T07:12:45.316709+00:00",
+    "judge_scores": {
+      "input_coherence": 5,
+      "ground_truth_verifiability": 4,
+      "rubric_clarity": 4,
+      "reasoning": "Scenario is realistic with clear constraints and hiring signals; ground truth has concrete elements but tone markers are somewhat subjective; rubric is clear on required elements/banned phrases but tone criteria could be more precise."
+    },
+    "judge_model": "qwen/qwen3-8b",
+    "partition": "train",
+    "seed": 42
+  },
+  "task_id": "TB-MS-0034",
+  "candidate_output": "",
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "we can immediately fulfill|end-to-end excellence|best-in-class|leverage talent|4 specialists ready now|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "VP ML hire|AI model optimization"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  }
+}

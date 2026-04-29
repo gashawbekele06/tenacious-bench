@@ -27,13 +27,35 @@
       "staffing"
     ],
     "banned_phrases": [
-      "hope this finds you well",
+      "A-players",
+      "bench",
+      "best-in-class",
       "circle back",
-      "touch base",
-      "synergy",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
       "leverage",
+      "loop you in",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
       "reach out",
-      "loop you in"
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
     ],
     "required_elements": [
       "calendar_link",
@@ -53,31 +75,38 @@
     "dimensions": [
       {
         "name": "banned_phrase_check",
-        "weight": 0.3,
+        "weight": 0.285,
         "check_type": "not_contains",
         "description": "No banned phrases.",
-        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|reach out"
+        "check_value": "circle back|hope this finds you well|leverage|reach out|touch base|synergy|just following up|circling back|synergize|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
       },
       {
         "name": "signal_reference_check",
-        "weight": 0.3,
+        "weight": 0.285,
         "check_type": "contains",
         "description": "Must reference signal.",
         "check_value": "vendor|staffing"
       },
       {
         "name": "calendar_link_check",
-        "weight": 0.1,
+        "weight": 0.095,
         "check_type": "regex",
         "description": "Must contain calendar link.",
         "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
       },
       {
         "name": "tone_judge",
-        "weight": 0.3,
+        "weight": 0.285,
         "check_type": "llm_score",
         "description": "LLM judge on 5 tone markers.",
         "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
       }
     ]
   },
@@ -85,7 +114,7 @@
     "week10_trace_ids": [],
     "week10_probe_ids": [],
     "partition": "train",
-    "created_at": "2026-04-29T06:47:03.732490+00:00",
+    "created_at": "2026-04-29T06:52:30.159952+00:00",
     "seed": 42,
     "generation_params": {
       "company_size": "51-200",

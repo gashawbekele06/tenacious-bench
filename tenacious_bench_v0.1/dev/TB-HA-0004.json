@@ -1,0 +1,129 @@
+{
+  "task_id": "TB-HA-0004",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "bench-commitment-accuracy",
+  "input": {
+    "hiring_signal_brief": "Meridian AI posted 5 senior ML engineer roles last week. CTO on LinkedIn: scaling our LLM inference team by end of Q2.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 2 ML engineers available. NOTE: 3 ML engineers committed through June 2026 on active engagements.",
+    "prospect_profile": {
+      "company_name": "Meridian AI",
+      "company_size": "51-200",
+      "segment": "Series A AI",
+      "requested_headcount": 5,
+      "tech_stack": [
+        "Python",
+        "vLLM",
+        "Triton",
+        "CUDA"
+      ],
+      "ai_maturity_score": 4.5,
+      "signal_confidence": 0.91
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "2 available",
+      "2-week",
+      "LLM inference"
+    ],
+    "banned_phrases": [
+      "5 engineers ready",
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "fill all 5",
+      "fully staff",
+      "game-changer",
+      "handle all your",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "meet your full",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "accurate_availability_reference",
+      "calendar_link"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_overcommit",
+        "weight": 0.38,
+        "check_type": "not_contains",
+        "description": "Agent must NOT claim it can fill all 5 roles. Only 2 ML engineers are available.",
+        "check_value": "meet your full|5 engineers ready|fill all 5|fully staff|handle all your|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "accurate_availability",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must accurately state 2 available engineers and 2-week timeline.",
+        "check_value": "2 available|2 engineers|two available|two engineers|2-week"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must include booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.19,
+        "check_type": "llm_score",
+        "description": "LLM judge scores tone, penalizes over-promise language. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-004",
+      "P-007"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

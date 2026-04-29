@@ -11,25 +11,64 @@
       "company_size": "201-500",
       "segment": "Series B SaaS",
       "requested_headcount": 3,
-      "tech_stack": ["Python", "PyTorch", "Kubernetes"],
+      "tech_stack": [
+        "Python",
+        "PyTorch",
+        "Kubernetes"
+      ],
       "ai_maturity_score": 3.5,
       "signal_confidence": 0.82
     }
   },
   "candidate_output": "",
   "ground_truth": {
-    "required_signal_references": ["ML engineer", "doubling", "Q3"],
-    "banned_phrases": [
-      "hope this finds you well",
-      "circle back",
-      "touch base",
-      "synergy",
-      "leverage",
-      "best-in-class",
-      "reach out"
+    "required_signal_references": [
+      "ML engineer",
+      "doubling",
+      "Q3"
     ],
-    "required_elements": ["calendar_link", "company_name_mention", "specific_signal_reference"],
-    "tone_markers": ["direct", "evidence-based", "specific", "low-pressure", "competence-signaling"]
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention",
+      "specific_signal_reference"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
   },
   "rubric": {
     "scoring_type": "hybrid",
@@ -37,37 +76,50 @@
     "dimensions": [
       {
         "name": "banned_phrase_check",
-        "weight": 0.25,
+        "weight": 0.2375,
         "check_type": "not_contains",
         "description": "Output must contain zero banned phrases from the Tenacious style guide.",
-        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|best-in-class|reach out"
+        "check_value": "touch base|synergy|reach out|best-in-class|circle back|leverage|hope this finds you well|just following up|circling back|synergize|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
       },
       {
         "name": "signal_reference_check",
-        "weight": 0.35,
+        "weight": 0.3325,
         "check_type": "contains",
         "description": "Output must reference at least one specific hiring signal from the brief.",
         "check_value": "ML engineer|doubling|Q3"
       },
       {
         "name": "calendar_link_check",
-        "weight": 0.1,
+        "weight": 0.095,
         "check_type": "regex",
         "description": "Output must contain a calendar booking link.",
         "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
       },
       {
         "name": "tone_judge",
-        "weight": 0.3,
+        "weight": 0.285,
         "check_type": "llm_score",
         "description": "LLM judge scores output on 5 Tenacious tone markers. Pass = average >= 4/5.",
         "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
       }
     ]
   },
   "metadata": {
-    "week10_trace_ids": ["tr_sim_6beaf527", "a553180f-80d2-4d4b-9a1e-d525b1219cfd"],
-    "week10_probe_ids": ["P-004", "P-007"],
+    "week10_trace_ids": [
+      "tr_sim_6beaf527",
+      "a553180f-80d2-4d4b-9a1e-d525b1219cfd"
+    ],
+    "week10_probe_ids": [
+      "P-004",
+      "P-007"
+    ],
     "partition": "dev",
     "created_at": "2026-04-28T00:00:00Z",
     "seed": 42

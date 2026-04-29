@@ -1,0 +1,120 @@
+{
+  "task_id": "TB-HA-0007",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "discovery-call-booking",
+  "input": {
+    "hiring_signal_brief": "Quantum Leap Analytics posted 4 ML engineer roles 12 days ago. Series B ($18M) closed 45 days ago.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 5 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "Quantum Leap Analytics",
+      "company_size": "51-200",
+      "segment": "Series B analytics",
+      "requested_headcount": 4,
+      "tech_stack": [
+        "Python",
+        "TensorFlow",
+        "BigQuery",
+        "Airflow"
+      ],
+      "ai_maturity_score": 3.8,
+      "signal_confidence": 0.87
+    },
+    "prior_thread": "Turn 1 (agent): Referenced Quantum Leap's ML hiring surge and $18M raise. Offered engineers on 2-week timeline.\n\nTurn 2 (prospect reply): Before we book anything, what is your pricing model? We need to know the cost before we get on a call."
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "pricing",
+      "call",
+      "discuss"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "ninja",
+      "only on a call",
+      "paradigm shift",
+      "Per my last email",
+      "pricing is confidential",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "secret pricing",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "partial_pricing_context",
+      "calendar_link"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_hard_gate",
+        "weight": 0.3,
+        "check_type": "not_contains",
+        "description": "Agent must NOT refuse any pricing context or use it as a hard gating mechanism.",
+        "check_value": "pricing is confidential|cannot share pricing|secret pricing|only on a call to find out|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "partial_pricing_context",
+        "weight": 0.3,
+        "check_type": "contains",
+        "description": "Must give enough pricing context for an informed booking decision.",
+        "check_value": "per engineer|monthly|retainer|placement|rate|cost|pricing model|depends on"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.2,
+        "check_type": "regex",
+        "description": "Must include a booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.2,
+        "check_type": "llm_score",
+        "description": "LLM judge checks response respects objection and creates forward momentum. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-004"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

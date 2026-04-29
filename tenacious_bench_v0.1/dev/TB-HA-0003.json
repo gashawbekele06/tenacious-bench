@@ -1,0 +1,127 @@
+{
+  "task_id": "TB-HA-0003",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "tone-preservation",
+  "input": {
+    "hiring_signal_brief": "DataDog clone startup Logpulse posted 2 ML engineer roles 5 days ago. Founder tweet 3 days ago: building anomaly detection in-house, tired of paying $40k/yr SaaS tax.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 4 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "Logpulse",
+      "company_size": "11-50",
+      "segment": "Seed-stage SaaS",
+      "requested_headcount": 2,
+      "tech_stack": [
+        "Python",
+        "Kafka",
+        "ClickHouse"
+      ],
+      "ai_maturity_score": 2.5,
+      "signal_confidence": 0.78
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "anomaly detection",
+      "40k",
+      "SaaS tax"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "cutting-edge",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "innovative solution",
+      "just following up",
+      "leverage",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "robust",
+      "rockstar",
+      "scalable solution",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "company_name_mention",
+      "specific_signal_reference",
+      "calendar_link"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "Must avoid all corporate filler phrases. Seed-stage founders respond to direct language.",
+        "check_value": "synergy|touch base|scalable solution|best-in-class|reach out|circle back|leverage|cutting-edge|innovative solution|world-class|hope this finds you well|robust|just following up|circling back|synergize|ecosystem|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference the specific founder signal: anomaly detection or $40k SaaS pain.",
+        "check_value": "anomaly detection|40k|SaaS tax|in-house"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Output must include a booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge checks tone matches founder-to-founder direct style. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-011"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

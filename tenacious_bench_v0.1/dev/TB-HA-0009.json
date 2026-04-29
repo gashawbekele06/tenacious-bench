@@ -1,0 +1,121 @@
+{
+  "task_id": "TB-HA-0009",
+  "source_mode": "hand-authored",
+  "difficulty": "adversarial",
+  "dimension": "signal-grounding",
+  "input": {
+    "hiring_signal_brief": "PivotPoint Software (150 employees) posted 1 data analyst role 30 days ago. No ML-specific roles. No funding announcements in past 6 months. signal_confidence: 0.21.",
+    "bench_summary": "Tenacious provides pre-vetted ML engineers on 2-week deployment timelines. Current bench: 3 ML engineers available.",
+    "prospect_profile": {
+      "company_name": "PivotPoint Software",
+      "company_size": "51-200",
+      "segment": "Bootstrap SaaS",
+      "requested_headcount": 1,
+      "tech_stack": [
+        "Python",
+        "MySQL",
+        "Tableau"
+      ],
+      "ai_maturity_score": 1.5,
+      "signal_confidence": 0.21
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "low signal",
+      "data analyst",
+      "qualify"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "AI initiative",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "doubling your AI",
+      "ecosystem",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "ML team",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "scale your ML",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret",
+      "your machine learning"
+    ],
+    "required_elements": [
+      "signal_qualification_step",
+      "no_false_ml_assumption"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.8,
+    "dimensions": [
+      {
+        "name": "no_false_ml_assumption",
+        "weight": 0.38,
+        "check_type": "not_contains",
+        "description": "Agent must NOT assume PivotPoint is building an ML team from one data analyst posting at 0.21 confidence.",
+        "check_value": "scale your ml|ai initiative|ml team|your machine learning|growing ai|doubling your ai|your ai roadmap|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|best-in-class|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "qualification_present",
+        "weight": 0.38,
+        "check_type": "contains",
+        "description": "Agent must qualify the prospect before pitching — ask about ML direction or acknowledge weak signal.",
+        "check_value": "data analyst|wondering if|are you|qualify|exploring|low signal|unclear|curious whether"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.19,
+        "check_type": "llm_score",
+        "description": "LLM judge checks agent does not pitch aggressively on weak signal. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [
+      "P-007",
+      "P-012"
+    ],
+    "partition": "dev",
+    "created_at": "2026-04-28T00:00:00Z",
+    "seed": 42
+  }
+}

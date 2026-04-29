@@ -1,0 +1,128 @@
+{
+  "dimension": "multi-turn-coherence",
+  "difficulty": "hard",
+  "scenario_description": "Agent must maintain Tenacious tone and gap-claim rigor across objection turn while respecting peer-count suppression gate.",
+  "input": {
+    "hiring_signal_brief": "Series B, ML hiring surge last 90 days, 2 competitors in healthcare identified running model training workflows.",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment.",
+    "prospect_profile": {
+      "company_name": "HealthTrack Solutions",
+      "company_size": "201-500",
+      "segment": "4",
+      "requested_headcount": 3,
+      "ai_maturity_score": 1.8,
+      "signal_confidence": 0.62
+    }
+  },
+  "ground_truth": {
+    "required_signal_references": [
+      "peer_count=3 triggers suppression",
+      "AI maturity 1.8 below gate 2.0"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "end-to-end",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "leverage talent",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "three companies in your sector",
+      "top talent",
+      "touch base",
+      "trend",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "hedge language on sector pattern",
+      "acknowledge self-directed AI strategy choice",
+      "direct confidence statement"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "respectful of prospect autonomy",
+      "no percentile claims"
+    ]
+  },
+  "failure_mode_targeted": "P-028 Gap over-claiming on insufficient peer sample",
+  "source_mode": "multi-llm-synthesis",
+  "metadata": {
+    "synthesis_model": "qwen/qwen3-8b",
+    "parent_seed_index": 6,
+    "created_at": "2026-04-29T07:17:55.227301+00:00",
+    "judge_scores": {
+      "input_coherence": 5,
+      "ground_truth_verifiability": 4,
+      "rubric_clarity": 3,
+      "reasoning": "The scenario is realistic and internally consistent with clear business context, ground truth elements are specific but some rubric components (e.g., hedging language) require interpretation, and required vs prohibited elements are delineated but could benefit from clearer examples."
+    },
+    "judge_model": "qwen/qwen3-8b",
+    "partition": "train",
+    "seed": 42
+  },
+  "task_id": "TB-MS-0045",
+  "candidate_output": "",
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "end-to-end|trend|best-in-class|leverage talent|three companies in your sector|hope this finds you well|just following up|circling back|circle back|touch base|synergy|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "peer_count=3 triggers suppression|AI maturity 1.8 below gate 2.0"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  }
+}

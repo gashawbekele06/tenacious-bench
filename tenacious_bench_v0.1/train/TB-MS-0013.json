@@ -1,0 +1,126 @@
+{
+  "dimension": "discovery-call-booking",
+  "difficulty": "hard",
+  "scenario_description": "Agent must book a call with East Africa CTO without offering timezone-hostile slots or over-committing bench capacity on ML stack.",
+  "input": {
+    "hiring_signal_brief": "Series A fintech, hired 3 ML engineers last 60 days, CTO posted on Nairobi tech forum yesterday.",
+    "bench_summary": "Tenacious: pre-vetted engineers, 2-week deployment. ML bench: 2 available, NestJS locked until week 14.",
+    "prospect_profile": {
+      "company_name": "Jaza Finance",
+      "company_size": "51-200",
+      "segment": "2",
+      "requested_headcount": 3,
+      "ai_maturity_score": 2.8,
+      "signal_confidence": 0.72
+    }
+  },
+  "ground_truth": {
+    "required_signal_references": [
+      "Series A momentum",
+      "recent ML hiring"
+    ],
+    "banned_phrases": [
+      "A-players",
+      "bench",
+      "best-in-class",
+      "circle back",
+      "circling back",
+      "disruptor",
+      "Don't miss out",
+      "ecosystem",
+      "end-to-end excellence",
+      "game-changer",
+      "hope this finds you well",
+      "just following up",
+      "leverage",
+      "leverage talent",
+      "ninja",
+      "paradigm shift",
+      "Per my last email",
+      "Quick chat",
+      "Quick question",
+      "reach out",
+      "rockstar",
+      "skyrocket",
+      "supercharge",
+      "synergize",
+      "synergy",
+      "top talent",
+      "touch base",
+      "wizard",
+      "world-class",
+      "You'll regret"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention",
+      "capacity_limit_acknowledged",
+      "timezone_aware_slot"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "honest_about_constraints",
+      "respect_for_autonomy"
+    ]
+  },
+  "failure_mode_targeted": "P-023 East Africa timezone edge case + P-007 ML bench over-commitment",
+  "source_mode": "multi-llm-synthesis",
+  "metadata": {
+    "synthesis_model": "claude-haiku-4-5",
+    "created_at": "2026-04-29T07:07:33.854675+00:00",
+    "judge_scores": {
+      "input_coherence": 5,
+      "ground_truth_verifiability": 4,
+      "rubric_clarity": 4,
+      "reasoning": "The scenario is realistic with consistent inputs, ground truth elements are mostly verifiable with clear banned phrases and required elements, and the rubric is clear despite subjective tone markers.",
+      "judge_type": "openrouter"
+    },
+    "judge_model": "qwen/qwen3-8b",
+    "partition": "train",
+    "seed": 42
+  },
+  "task_id": "TB-MS-0013",
+  "candidate_output": "",
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.285,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "circle back|end-to-end excellence|best-in-class|leverage talent|synergy|hope this finds you well|just following up|circling back|touch base|synergize|leverage|ecosystem|world-class|top talent|A-players|rockstar|ninja|wizard|skyrocket|supercharge|game-changer|disruptor|paradigm shift|reach out|Quick question|Quick chat|Don't miss out|You'll regret|Per my last email|bench"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.285,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "Series A momentum|recent ML hiring"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.095,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.285,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.05,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be <= 120 words (Style Guide v2 formatting constraint).",
+        "check_value": "120"
+      }
+    ]
+  }
+}
