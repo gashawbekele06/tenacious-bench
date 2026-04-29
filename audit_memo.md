@@ -48,7 +48,7 @@ the gap this benchmark is designed to close.
 Because the dominant failure is **surface-level tone drift**, not structural task failure,
 the benchmark must enforce machine-verifiable style constraints:
 
-1. **Tone-preservation** — zero banned phrases from the 23-phrase style guide AND average ≥ 4/5 across 5 tone markers (direct, evidence-based, specific, low-pressure, competence-signaling).
+1. **Tone-preservation** — zero banned phrases from the 28-phrase Style Guide v2 AND average ≥ 4/5 across 5 tone markers (Direct, Grounded, Honest, Professional, Non-condescending).
 2. **Signal-grounding** — at least one phrase from `required_signal_references` appears verbatim; confidence-gated claims use hedged language when `signal_confidence < 0.55`.
 3. **Bench-commitment accuracy** — no headcount or start-date commitment that exceeds `bench_summary` constraints; verifiable by regex against committed figures.
 4. **Prospect-qualification** — segment assignment and disqualifier logic enforced before outreach framing; checkable via prospect_profile fields.

@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "train_count": 233,
+    "dev_count": 14,
+    "held_out_count": 3,
+    "ngram_violations": 0,
+    "embedding_violations": 0,
+    "time_shift_violations": 0,
+    "passed": true
+  },
+  "ngram_overlap_violations": [],
+  "embedding_similarity_violations": [],
+  "time_shift_violations": []
+}

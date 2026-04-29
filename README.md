@@ -3,7 +3,7 @@
 **A sales agent evaluation benchmark for Tenacious-specific B2B outreach quality**
 
 > Built as part of TRP1 Week 11 — Sales Agent Evaluation Bench challenge.  
-> Author: [Your name] | [your-email@10academy.org]
+> Author: Gashaw Bekele | gashaw@10academy.org
 
 ---
 
@@ -16,7 +16,7 @@ B2B engineering staffing domain.
 The benchmark provides:
 - **200–300 evaluation tasks** across 8 Tenacious-specific dimensions
 - **A machine-verifiable scoring evaluator** (`scoring_evaluator.py`)
-- **A trained LoRA adapter** (Path [A/B/C]) that lifts the Week 10 agent on the primary failure mode
+- **A trained LoRA adapter** (Path A) that lifts the Week 10 agent on the primary failure mode
 - **A contamination-clean held-out partition** with statistical ablation results
 
 ---
@@ -25,7 +25,7 @@ The benchmark provides:
 
 ```bash
 # 1. Clone
-git clone https://github.com/[your-github-handle]/tenacious-bench.git
+git clone https://github.com/gashabekele/tenacious-bench.git
 cd tenacious-bench
 
 # 2. Install dependencies
@@ -98,12 +98,12 @@ tenacious-bench/
 
 | Phase | Status | Target |
 |-------|--------|--------|
-| Day 0 — Pre-flight | | Sunday |
-| Act I — Audit + Schema | | Monday (interim: Wed 21:00 UTC) |
-| Act II — Dataset Authoring | | Tue–Wed |
-| Act III — Training Data Prep | | Thursday |
-| Act IV — Train + Ablate | | Fri–Sat |
-| Act V — Publish + Engage | | Saturday (final: Sat 21:00 UTC) |
+| Day 0 — Pre-flight | Complete | Sunday |
+| Act I — Audit + Schema | Complete | Monday (interim: Wed 21:00 UTC) |
+| Act II — Dataset Authoring | Complete (250 tasks) | Tue–Wed |
+| Act III — Training Data Prep | Pending | Thursday |
+| Act IV — Train + Ablate | Pending | Fri–Sat |
+| Act V — Publish + Engage | Pending | Saturday (final: Sat 21:00 UTC) |
 
 ---
 

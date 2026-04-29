@@ -76,7 +76,7 @@ combinatorial expansion of probe templates, multi-LLM synthesis via OpenRouter, 
 adversarial tasks written by the dataset author.
 
 **Who collected the data?**  
-[Your name], with LLM assistance from Claude Sonnet 4.6 (Anthropic) and Qwen models (OpenRouter).
+Gashaw Bekele (gashaw@10academy.org), with LLM assistance from Claude Sonnet 4.6 (Anthropic) and Qwen models (OpenRouter).
 
 **Timeframe:**  
 2026-04-27 to 2026-04-28 (Week 11 sprint)
@@ -118,7 +118,7 @@ Synthetic seed data and generation scripts available in `generation_scripts/`.
 ## 6. Distribution
 
 **How is the dataset distributed?**  
-HuggingFace Hub: `[your-handle]/tenacious-bench-v0.1`
+HuggingFace Hub: `gashabekele/tenacious-bench-v0.1` (to be published post-Week 11)
 
 **License:**  
 CC-BY-4.0 — free to use with attribution.
@@ -126,11 +126,11 @@ CC-BY-4.0 — free to use with attribution.
 **Citation:**  
 ```bibtex
 @dataset{tenacious_bench_v01,
-  author    = {[Your name]},
+  author    = {Gashaw Bekele},
   title     = {Tenacious-Bench v0.1: A Sales Agent Evaluation Benchmark},
   year      = {2026},
   publisher = {HuggingFace Hub},
-  url       = {https://huggingface.co/datasets/[your-handle]/tenacious-bench-v0.1}
+  url       = {https://huggingface.co/datasets/gashabekele/tenacious-bench-v0.1}
 }
 ```
 
@@ -139,11 +139,11 @@ CC-BY-4.0 — free to use with attribution.
 ## 7. Maintenance (Periscopic)
 
 **Who maintains the dataset?**  
-[Your name] — [your contact/GitHub]
+Gashaw Bekele — gashaw@10academy.org
 
 **Will the dataset be updated?**  
 v0.2 planned to address failure modes identified in the skeptic's appendix. Held-out tasks
 will be released after leaderboard publication.
 
 **What mechanisms exist for error reporting?**  
-Open a GitHub Issue at [repo URL].
+Open a GitHub Issue at https://github.com/gashabekele/tenacious-bench.
