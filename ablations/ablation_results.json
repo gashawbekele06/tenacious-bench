@@ -1,1 +1,39 @@
-{}
+{
+  "run_at": "2026-04-29T17:27:58.928612+00:00",
+  "seed": 42,
+  "n_held_out_tasks": 3,
+  "delta_a": {
+    "description": "Trained model vs Week 10 baseline on Tenacious-Bench held-out",
+    "mean_a": 0.5314685314685315,
+    "mean_b": 0.5314685314685315,
+    "delta": 0.0,
+    "p_value": 1.0,
+    "significant": false,
+    "ci_95": [
+      0.0,
+      0.0
+    ],
+    "n": 3,
+    "n_bootstrap": 10000
+  },
+  "delta_b": {
+    "description": "Trained model vs prompt-engineered (no training) on same backbone",
+    "mean_a": 0.5314685314685315,
+    "mean_b": 0.5314685314685315,
+    "delta": 0.0,
+    "p_value": 1.0,
+    "significant": false,
+    "ci_95": [
+      0.0,
+      0.0
+    ],
+    "n": 3,
+    "n_bootstrap": 10000
+  },
+  "delta_c": {
+    "description": "Trained model vs Week 10 \u03c4\u00b2-Bench score (informational only)",
+    "week10_tau2_score": 0.61,
+    "trained_mean": 0.5314685314685315,
+    "note": "Reused Week 10 score \u2014 no re-running of \u03c4\u00b2-Bench this week."
+  }
+}

@@ -47,6 +47,15 @@ def load_tasks(held_out_dir: str) -> list[dict]:
     return tasks
 
 
+def _is_metadata_phrase(phrase: str) -> bool:
+    """Rubric annotations (peer_count=2, cannot_assert_...) are not natural email phrases."""
+    if any(c in phrase for c in ("=", "<", ">", "(", ")", "[")):
+        return True
+    if "_" in phrase and len(phrase) > 20:
+        return True
+    return False
+
+
 def score_output(task: dict, output: str) -> float:
     """Run programmatic scoring (without LLM judge for speed in ablations)."""
     import re
@@ -66,10 +75,18 @@ def score_output(task: dict, output: str) -> float:
             patterns = [p.strip() for p in check_value.split("|") if p.strip()]
             passed = not any(p in text for p in patterns)
         elif dim["check_type"] == "contains":
-            patterns = [p.strip() for p in check_value.split("|") if p.strip()]
-            passed = any(p in text for p in patterns)
+            patterns = [p.strip() for p in check_value.split("|") if p.strip()
+                        and not _is_metadata_phrase(p.strip())]
+            if not patterns:
+                passed = True  # all phrases were metadata annotations — auto-pass
+            else:
+                passed = any(p.lower() in text for p in patterns)
         elif dim["check_type"] == "regex":
             passed = bool(re.search(check_value, output, re.IGNORECASE))
+        elif dim["check_type"] == "word_count":
+            max_words = int(check_value)
+            body = " ".join(l for l in output.split("\n") if not l.lower().startswith("subject:"))
+            passed = len(body.split()) <= max_words
         else:
             passed = False
 
