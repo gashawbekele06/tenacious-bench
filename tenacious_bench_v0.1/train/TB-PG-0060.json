@@ -1,0 +1,98 @@
+{
+  "task_id": "TB-PG-0060",
+  "source_mode": "programmatic",
+  "difficulty": "medium",
+  "dimension": "discovery-call-booking",
+  "input": {
+    "hiring_signal_brief": "NovaBridge opened your last email 4 times but did not reply. They have 2 open ML roles.",
+    "bench_summary": "Tenacious provides pre-vetted senior engineers on 2-week deployment timelines. Typical engagement: 3-6 months, option to convert. No placement fees.",
+    "prospect_profile": {
+      "company_name": "NovaBridge",
+      "company_size": "201-500",
+      "segment": "Series A SaaS",
+      "requested_headcount": 2,
+      "tech_stack": [
+        "Kubernetes",
+        "Python",
+        "Go"
+      ],
+      "ai_maturity_score": 3.0,
+      "signal_confidence": 0.55
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "open",
+      "ML"
+    ],
+    "banned_phrases": [
+      "hope this finds you well",
+      "circle back",
+      "touch base",
+      "synergy",
+      "leverage",
+      "reach out",
+      "loop you in"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.3,
+        "check_type": "not_contains",
+        "description": "No banned phrases.",
+        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|reach out"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.3,
+        "check_type": "contains",
+        "description": "Must reference signal.",
+        "check_value": "open|ML"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.1,
+        "check_type": "regex",
+        "description": "Must contain calendar link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.3,
+        "check_type": "llm_score",
+        "description": "LLM judge on 5 tone markers.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [],
+    "week10_probe_ids": [],
+    "partition": "train",
+    "created_at": "2026-04-29T06:47:03.738389+00:00",
+    "seed": 42,
+    "generation_params": {
+      "company_size": "201-500",
+      "segment": "Series A SaaS",
+      "ai_maturity_score": 3.0,
+      "signal_confidence": 0.55,
+      "headcount": 2
+    }
+  }
+}

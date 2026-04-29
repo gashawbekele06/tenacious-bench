@@ -1,0 +1,102 @@
+{
+  "task_id": "TB-TD-0042",
+  "source_mode": "trace-derived",
+  "difficulty": "medium",
+  "dimension": "signal-grounding",
+  "input": {
+    "hiring_signal_brief": "Aurelia Health closed a $55,000,000 Series C on 2025-08-05. 6 open engineering roles posted \u2014 up 2 in the last 60 days. ML-specific roles: 1. Python roles: 3. Leadership change in the last 90 days: {'role': 'CTO', 'appointment_date': '2026-02-28'}. Modern data stack detected: dbt, Databricks, Weights & Biases.",
+    "bench_summary": "Tenacious provides pre-vetted senior engineers on 2-week deployment timelines. Available bench: ML (5), Python/Backend (6), Fullstack (4), Data (3). NestJS stack committed through Q3 2026 on Modo Compass engagement.",
+    "prospect_profile": {
+      "company_name": "Aurelia Health",
+      "company_size": "201-500",
+      "segment": "Leadership change",
+      "requested_headcount": 5,
+      "tech_stack": [
+        "dbt",
+        "Databricks",
+        "Weights & Biases"
+      ],
+      "ai_maturity_score": 3.5,
+      "signal_confidence": 0.75
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "Series C",
+      "ML",
+      "Python",
+      "6"
+    ],
+    "banned_phrases": [
+      "hope this finds you well",
+      "circle back",
+      "touch base",
+      "synergy",
+      "leverage",
+      "best-in-class",
+      "reach out",
+      "loop you in",
+      "end-to-end",
+      "just wanted to"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.3,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|best-in-class|reach out|loop you in|end-to-end|just wanted to"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.3,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "Series C|ML|Python|6"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.1,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.3,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [
+      "prospect_003"
+    ],
+    "week10_probe_ids": [
+      "P-006",
+      "P-002"
+    ],
+    "source_email_subject": "welcome to Aurelia Health \u2014 quick resource",
+    "partition": "train",
+    "created_at": "2026-04-29T06:42:10.519300+00:00",
+    "seed": 42
+  }
+}

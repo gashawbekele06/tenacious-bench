@@ -1,0 +1,102 @@
+{
+  "task_id": "TB-TD-0048",
+  "source_mode": "trace-derived",
+  "difficulty": "medium",
+  "dimension": "signal-grounding",
+  "input": {
+    "hiring_signal_brief": "Nimbus Ledger Inc. closed a $14,000,000 Series B on 2026-02-12. 11 open engineering roles posted \u2014 up 8 in the last 60 days. ML-specific roles: 1. Python roles: 7. Modern data stack detected: dbt, Snowflake.",
+    "bench_summary": "Tenacious provides pre-vetted senior engineers on 2-week deployment timelines. Available bench: ML (5), Python/Backend (6), Fullstack (4), Data (3). NestJS stack committed through Q3 2026 on Modo Compass engagement.",
+    "prospect_profile": {
+      "company_name": "Nimbus Ledger Inc.",
+      "company_size": "11-50",
+      "segment": "Series B SaaS",
+      "requested_headcount": 5,
+      "tech_stack": [
+        "dbt",
+        "Snowflake"
+      ],
+      "ai_maturity_score": 2.0,
+      "signal_confidence": 0.87
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": [
+      "Series B",
+      "ML",
+      "Python",
+      "11"
+    ],
+    "banned_phrases": [
+      "hope this finds you well",
+      "circle back",
+      "touch base",
+      "synergy",
+      "leverage",
+      "best-in-class",
+      "reach out",
+      "loop you in",
+      "end-to-end",
+      "just wanted to"
+    ],
+    "required_elements": [
+      "calendar_link",
+      "company_name_mention"
+    ],
+    "tone_markers": [
+      "direct",
+      "evidence-based",
+      "specific",
+      "low-pressure",
+      "competence-signaling"
+    ]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.3,
+        "check_type": "not_contains",
+        "description": "No banned phrases from Tenacious style guide.",
+        "check_value": "hope this finds you well|circle back|touch base|synergy|leverage|best-in-class|reach out|loop you in|end-to-end|just wanted to"
+      },
+      {
+        "name": "signal_reference_check",
+        "weight": 0.3,
+        "check_type": "contains",
+        "description": "Must reference at least one hiring signal from the brief.",
+        "check_value": "Series B|ML|Python|11"
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.1,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.3,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on 5 Tenacious tone markers. Pass = avg >= 4/5.",
+        "check_value": ""
+      }
+    ]
+  },
+  "metadata": {
+    "week10_trace_ids": [
+      "prospect_001"
+    ],
+    "week10_probe_ids": [
+      "P-004",
+      "P-005",
+      "P-007"
+    ],
+    "source_email_subject": "Python hiring velocity after your Series B",
+    "partition": "train",
+    "created_at": "2026-04-29T06:42:10.526301+00:00",
+    "seed": 42
+  }
+}
