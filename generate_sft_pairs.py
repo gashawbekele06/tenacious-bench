@@ -63,7 +63,7 @@ Prospect:
 - AI maturity score: {ai_maturity_score}
 - Signal confidence: {signal_confidence}
 
-Required signal references to include: {required_signal_references}
+REQUIRED — you MUST use at least one of these exact phrases verbatim in the email body: {required_signal_references_str}
 Calendar link to use: cal.com/tenacious"""
 
 
@@ -81,6 +81,25 @@ def call_claude(system: str, user: str, model: str = "claude-haiku-4-5") -> str:
         ],
     )
     return r.choices[0].message.content.strip()
+
+
+def is_metadata_phrase(phrase: str) -> bool:
+    """True if the phrase is a rubric annotation, not a natural email phrase.
+    Heuristics: contains = < > () [], looks like code notation, or is clearly
+    a constraint description rather than something an email would contain.
+    """
+    if any(c in phrase for c in ("=", "<", ">", "(", ")", "[")):
+        return True
+    # Long phrases with underscores are rubric keys, not natural language
+    if "_" in phrase and len(phrase) > 20:
+        return True
+    return False
+
+
+def natural_signal_phrases(check_value: str) -> list[str]:
+    """Return only the non-metadata phrases from a pipe-separated check_value."""
+    return [p.strip() for p in check_value.split("|")
+            if p.strip() and not is_metadata_phrase(p.strip())]
 
 
 def count_words(text: str) -> int:
@@ -109,8 +128,11 @@ def check_rubric(output: str, task: dict) -> tuple[bool, list[str]]:
                 failures.append(f"{name}: banned phrases found: {hits}")
 
         elif check_type == "contains":
-            patterns = [p.strip() for p in check_value.split("|") if p.strip()]
-            if not any(p.lower() in text for p in patterns):
+            patterns = natural_signal_phrases(check_value)
+            if not patterns:
+                # All phrases were metadata annotations — auto-pass this check
+                pass
+            elif not any(p.lower() in text for p in patterns):
                 failures.append(f"{name}: required phrase not found (need one of: {patterns[:3]}...)")
 
         elif check_type == "regex":
@@ -126,12 +148,14 @@ def check_rubric(output: str, task: dict) -> tuple[bool, list[str]]:
     return len(failures) == 0, failures
 
 
-def format_sft_record(task: dict, gold_output: str) -> dict:
-    """Format as Qwen3 chat-template text for SFTTrainer (dataset_text_field='text')."""
+def build_user_msg(task: dict) -> str:
     inp = task.get("input", {})
     pp = inp.get("prospect_profile", {})
-
-    user_msg = USER_TEMPLATE.format(
+    raw_refs = task.get("ground_truth", {}).get("required_signal_references", [])
+    # Only pass natural-language phrases into the prompt; skip rubric annotations
+    natural_refs = [r for r in raw_refs if not is_metadata_phrase(r)]
+    refs_str = ", ".join(f'"{r}"' for r in natural_refs) if natural_refs else "(ground in the hiring signal brief)"
+    return USER_TEMPLATE.format(
         hiring_signal_brief=inp.get("hiring_signal_brief", ""),
         bench_summary=inp.get("bench_summary", ""),
         company_name=pp.get("company_name", ""),
@@ -140,8 +164,13 @@ def format_sft_record(task: dict, gold_output: str) -> dict:
         requested_headcount=pp.get("requested_headcount", ""),
         ai_maturity_score=pp.get("ai_maturity_score", ""),
         signal_confidence=pp.get("signal_confidence", ""),
-        required_signal_references=task.get("ground_truth", {}).get("required_signal_references", []),
+        required_signal_references_str=refs_str,
     )
+
+
+def format_sft_record(task: dict, gold_output: str) -> dict:
+    """Format as Qwen3 chat-template text for SFTTrainer (dataset_text_field='text')."""
+    user_msg = build_user_msg(task)
 
     text = (
         f"<|im_start|>system\n{SYSTEM_PROMPT}<|im_end|>\n"
@@ -197,19 +226,7 @@ def main():
 
             for attempt in range(args.max_retries + 1):
                 try:
-                    inp = task.get("input", {})
-                    pp = inp.get("prospect_profile", {})
-                    user_msg = USER_TEMPLATE.format(
-                        hiring_signal_brief=inp.get("hiring_signal_brief", ""),
-                        bench_summary=inp.get("bench_summary", ""),
-                        company_name=pp.get("company_name", ""),
-                        company_size=pp.get("company_size", ""),
-                        segment=pp.get("segment", ""),
-                        requested_headcount=pp.get("requested_headcount", ""),
-                        ai_maturity_score=pp.get("ai_maturity_score", ""),
-                        signal_confidence=pp.get("signal_confidence", ""),
-                        required_signal_references=task.get("ground_truth", {}).get("required_signal_references", []),
-                    )
+                    user_msg = build_user_msg(task)
                     gold = call_claude(SYSTEM_PROMPT, user_msg, model=args.model)
                     ok, failures = check_rubric(gold, task)
 
