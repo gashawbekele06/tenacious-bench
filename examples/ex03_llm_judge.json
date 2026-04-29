@@ -1,0 +1,83 @@
+{
+  "task_id": "EX-03",
+  "source_mode": "hand-authored",
+  "difficulty": "hard",
+  "dimension": "objection-handling",
+  "scenario_description": "Prospect raised offshore-perception objection ('bad experience with offshore teams'). Agent must reply with specific evidence, not generic reassurance. Tests the LLM judge (hybrid scoring) for all 5 tone markers: direct, grounded, honest, professional, non_condescending.",
+  "input": {
+    "hiring_signal_brief": "Prospect: DataSpark (Series B, 80 engineers). Offshore objection raised at turn 2: 'We had a bad experience with an offshore team — communication gaps, delayed delivery.'",
+    "bench_summary": "Tenacious engineers are US-timezone-aligned, interviewed by Tenacious engineers (not recruiters). Deployment case: Clearbit integrated a Tenacious ML engineer in 11 days.",
+    "prospect_profile": {
+      "company_name": "DataSpark",
+      "company_size": "51-200",
+      "segment": "Series B data infrastructure",
+      "requested_headcount": 2,
+      "ai_maturity_score": 3.0,
+      "signal_confidence": 0.78
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": ["Clearbit", "11 days", "DataSpark"],
+    "banned_phrases": [
+      "I completely understand your frustration",
+      "I hear you", "We are different", "bench",
+      "world-class", "top talent", "leverage", "synergy"
+    ],
+    "required_elements": ["specific_case_study", "calendar_link"]
+  },
+  "rubric": {
+    "scoring_type": "hybrid",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "banned_phrase_check",
+        "weight": 0.20,
+        "check_type": "not_contains",
+        "description": "No defensive appeasement phrases or style-guide violations.",
+        "check_value": "I completely understand your frustration|I hear you|We are different|bench|world-class|top talent|leverage|synergy",
+        "example_fail": "I completely understand your frustration — we are totally different from other offshore teams.",
+        "example_pass": "That is a fair concern. The Clearbit integration took 11 days..."
+      },
+      {
+        "name": "case_study_reference_check",
+        "weight": 0.25,
+        "check_type": "contains",
+        "description": "Reply must cite a specific case study (Clearbit, 11-day deployment) not generic reassurance.",
+        "check_value": "Clearbit|11 days|11-day",
+        "example_fail": "Our engineers have an excellent track record of successful integrations.",
+        "example_pass": "...the Clearbit team had an ML engineer integrated in 11 days..."
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.10,
+        "check_type": "regex",
+        "description": "Must include a calendar link for the next step.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)",
+        "example_fail": "Let me know if you want to continue the conversation.",
+        "example_pass": "...if that is relevant, happy to walk through it: cal.com/tenacious"
+      },
+      {
+        "name": "tone_judge",
+        "weight": 0.45,
+        "check_type": "llm_score",
+        "description": "LLM judge scores on all 5 Tenacious tone markers (direct, grounded, honest, professional, non_condescending). Pass = average >= 4.0. This is the primary check for objection-handling tasks.",
+        "check_value": "",
+        "marker_mapping": {
+          "direct": "subject names the topic; one clear next step",
+          "grounded": "Clearbit case study cited with specifics (11 days, ML engineer)",
+          "honest": "acknowledges uncertainty; does not over-promise future performance",
+          "professional": "no banned phrases; no 'bench' externally",
+          "non_condescending": "objection treated as legitimate research finding, not a misunderstanding to correct"
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "purpose": "Demonstrates hybrid scoring: programmatic checks (not_contains, contains, regex) combined with llm_score. The tone_judge dimension (weight=0.45) calls TONE_JUDGE_PROMPT in scoring_evaluator.py against all 5 Style Guide v2 markers.",
+    "scorer_demo": "python scoring_evaluator.py --task examples/ex03_llm_judge.json --output \"Subject: Re: offshore concern\\n\\nThat is a fair concern — communication gaps are the most common failure mode we see. The Clearbit team integrated one of our ML engineers in 11 days; their lead said the main difference was daily 9am standups in US-East timezone. Happy to share the specifics: cal.com/tenacious\"",
+    "week10_probe": "P-011 (offshore-perception objection, highest trigger rate 0.44)",
+    "created_at": "2026-04-29T00:00:00Z",
+    "partition": "example"
+  }
+}

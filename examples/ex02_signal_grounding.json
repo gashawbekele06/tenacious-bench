@@ -1,0 +1,77 @@
+{
+  "task_id": "EX-02",
+  "source_mode": "hand-authored",
+  "difficulty": "medium",
+  "dimension": "signal-grounding",
+  "scenario_description": "Agent must ground its pitch in a specific hiring velocity signal (12 ML roles in 60 days). Tests signal reference and confidence-gated phrasing. signal_confidence=0.52 requires hedged language, not assertions.",
+  "input": {
+    "hiring_signal_brief": "NeuralCart posted 12 ML engineer roles over 60 days. signal_confidence=0.52 (job-board only, no confirmed deployment).",
+    "bench_summary": "Tenacious has 3 ML engineers available, 2-week deployment.",
+    "prospect_profile": {
+      "company_name": "NeuralCart",
+      "company_size": "51-200",
+      "segment": "Series B e-commerce",
+      "requested_headcount": 3,
+      "ai_maturity_score": 2.5,
+      "signal_confidence": 0.52
+    }
+  },
+  "candidate_output": "",
+  "ground_truth": {
+    "required_signal_references": ["12 ML", "60 days", "NeuralCart"],
+    "banned_phrases": [
+      "confirmed", "we know you", "your team is definitely",
+      "bench", "leverage", "synergy", "world-class", "top talent"
+    ],
+    "required_elements": ["calendar_link", "hedged_language"]
+  },
+  "rubric": {
+    "scoring_type": "programmatic",
+    "threshold": 0.75,
+    "dimensions": [
+      {
+        "name": "signal_reference_check",
+        "weight": 0.40,
+        "check_type": "contains",
+        "description": "Must reference the specific signal: 12 ML roles, 60-day window, or NeuralCart by name.",
+        "check_value": "12 ML|12 machine learning|60 days|60-day|NeuralCart",
+        "example_fail": "I see your company is aggressively hiring AI talent.",
+        "example_pass": "...NeuralCart's 12 ML engineer postings over the last 60 days..."
+      },
+      {
+        "name": "confidence_gate_check",
+        "weight": 0.30,
+        "check_type": "not_contains",
+        "description": "Low confidence signal (0.52) requires hedged phrasing. Assertive claims are a violation.",
+        "check_value": "confirmed|we know you are|your team is definitely|you are clearly|you need",
+        "example_fail": "We know your team is definitely scaling ML this quarter.",
+        "example_pass": "...based on recent postings, it looks like you may be scaling ML capacity..."
+      },
+      {
+        "name": "calendar_link_check",
+        "weight": 0.20,
+        "check_type": "regex",
+        "description": "Must contain a calendar booking link.",
+        "check_value": "(calendly|cal\\.com|savvycal|hubspot meetings)",
+        "example_fail": "Email me back if interested.",
+        "example_pass": "...happy to show you the profiles: cal.com/tenacious"
+      },
+      {
+        "name": "word_count_check",
+        "weight": 0.10,
+        "check_type": "word_count",
+        "description": "Cold outreach body must be at most 120 words.",
+        "check_value": "120",
+        "example_fail": "(email body > 120 words)",
+        "example_pass": "(email body <= 120 words)"
+      }
+    ]
+  },
+  "metadata": {
+    "purpose": "Demonstrates contains (signal reference) and not_contains (confidence-gate) checks. Shows how signal_confidence < 0.55 requires hedged phrasing enforced via programmatic rubric.",
+    "scorer_demo": "python scoring_evaluator.py --task examples/ex02_signal_grounding.json --output \"Subject: ML hiring at NeuralCart\\n\\nHi — based on NeuralCart's 12 ML engineer postings over the last 60 days, it looks like you may be scaling your ML team. We have three vetted ML engineers available in two weeks. Worth comparing notes? cal.com/tenacious\"",
+    "week10_probe": "P-004 (velocity claim on thin signal), P-012 (over-confidence on low-confidence data)",
+    "created_at": "2026-04-29T00:00:00Z",
+    "partition": "example"
+  }
+}

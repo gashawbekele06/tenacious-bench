@@ -2,11 +2,30 @@
 scoring_evaluator.py
 
 Machine-verifiable scorer for Tenacious-Bench tasks.
+
 Usage:
-    python scoring_evaluator.py --task schema.json --output "Your agent output here"
+    # Single task
+    python scoring_evaluator.py --task examples/ex01_tone_preservation.json --output "..."
+
+    # Batch (dev or held-out partition)
     python scoring_evaluator.py --batch tenacious_bench_v0.1/dev/ --agent_outputs outputs.jsonl
 
-The evaluator runs programmatic checks first (banned phrases, required elements, regex),
+    # Demo mode — runs all three wired examples with passing mock outputs
+    python scoring_evaluator.py --demo
+
+Check-type to example mapping:
+    not_contains    → ex01 (banned_phrase_check, w=0.45) — banned phrase avoidance
+                      ex02 (confidence_gate_check, w=0.30) — low-confidence hedging
+                      ex03 (banned_phrase_check, w=0.20) — defensive appeasement phrases
+    contains        → ex01 (signal_reference_check, w=0.30) — Node.js / Vantage Pay
+                      ex02 (signal_reference_check, w=0.40) — 12 ML roles / 60 days / NeuralCart
+                      ex03 (case_study_reference_check, w=0.25) — Clearbit / 11 days
+    regex           → ex01/02/03 (calendar_link_check) — calendly|cal.com|savvycal|hubspot
+    word_count      → ex01 (w=0.05), ex02 (w=0.10) — cold outreach body ≤ 120 words
+    llm_score       → ex03 (tone_judge, w=0.45) — all 5 Style Guide v2 markers:
+                       direct, grounded, honest, professional, non_condescending
+
+The evaluator runs programmatic checks first (not_contains, contains, regex, word_count),
 then calls the LLM judge only for tasks with scoring_type = "hybrid" or "llm-judge".
 """
 
@@ -157,7 +176,25 @@ def check_word_count(text: str, max_words: int) -> tuple[bool, str]:
 def score_task(task: dict, candidate_output: str, judge_model: str | None = None) -> dict:
     """
     Score a single task against candidate_output.
-    Returns a result dict with per-dimension scores and an overall score.
+
+    Dimension → check_type mapping (see examples/ for wired demonstrations):
+      ex01_tone_preservation.json
+        banned_phrase_check      not_contains  w=0.45  28-phrase Style Guide v2 list
+        signal_reference_check   contains      w=0.30  "Node.js|Vantage Pay"
+        calendar_link_check      regex         w=0.20  calendly|cal.com|savvycal|hubspot
+        word_count_check         word_count    w=0.05  body ≤ 120 words
+
+      ex02_signal_grounding.json
+        signal_reference_check   contains      w=0.40  "12 ML|60 days|NeuralCart"
+        confidence_gate_check    not_contains  w=0.30  assertive phrases banned at confidence <0.55
+        calendar_link_check      regex         w=0.20  calendly|cal.com|savvycal|hubspot
+        word_count_check         word_count    w=0.10  body ≤ 120 words
+
+      ex03_llm_judge.json   (hybrid scoring — programmatic + LLM)
+        banned_phrase_check          not_contains  w=0.20  defensive appeasement phrases
+        case_study_reference_check   contains      w=0.25  "Clearbit|11 days|11-day"
+        calendar_link_check          regex         w=0.10  calendly|cal.com|savvycal|hubspot
+        tone_judge                   llm_score     w=0.45  all 5 markers avg ≥ 4.0
     """
     rubric = task["rubric"]
     dimension_results = []
@@ -219,6 +256,58 @@ def score_task(task: dict, candidate_output: str, judge_model: str | None = None
 # CLI
 # ---------------------------------------------------------------------------
 
+DEMO_EXAMPLES = [
+    {
+        "task_file": "examples/ex01_tone_preservation.json",
+        "output": (
+            "Subject: Node.js engineers for Vantage Pay\n\n"
+            "Hi — noticed Vantage Pay posted five senior Node.js roles this week. "
+            "We have four vetted Node.js engineers deployable in two weeks. "
+            "Worth a 20-min call? cal.com/tenacious"
+        ),
+    },
+    {
+        "task_file": "examples/ex02_signal_grounding.json",
+        "output": (
+            "Subject: ML hiring at NeuralCart\n\n"
+            "Hi — based on NeuralCart's 12 ML engineer postings over the last 60 days, "
+            "it looks like you may be scaling your ML team. "
+            "We have three vetted ML engineers available in two weeks. "
+            "Worth comparing notes? cal.com/tenacious"
+        ),
+    },
+    {
+        "task_file": "examples/ex03_llm_judge.json",
+        "output": (
+            "Subject: Re: offshore concern\n\n"
+            "That is a fair concern — communication gaps are the most common failure mode we see. "
+            "The Clearbit team integrated one of our ML engineers in 11 days; "
+            "their lead said the main difference was daily 9am standups in US-East timezone. "
+            "Happy to share the specifics: cal.com/tenacious"
+        ),
+    },
+]
+
+
+def run_demo(judge_model: str | None = None) -> None:
+    """Run the scorer against all three wired example tasks and print per-dimension results."""
+    print("=== Tenacious-Bench Demo Mode ===\n")
+    for entry in DEMO_EXAMPLES:
+        task_path = Path(entry["task_file"])
+        if not task_path.exists():
+            print(f"[SKIP] {task_path} not found — run from repo root.\n")
+            continue
+        with open(task_path) as f:
+            task = json.load(f)
+        result = score_task(task, entry["output"], judge_model)
+        print(f"Task: {result['task_id']}  ({task['dimension']})")
+        print(f"  Overall: {result['overall_score']:.4f}  {'PASS' if result['passed'] else 'FAIL'}  (threshold={result['threshold']})")
+        for dim in result["dimension_results"]:
+            status = "PASS" if dim["passed"] else "FAIL"
+            print(f"  [{status}] {dim['name']} (w={dim['weight']}) — {dim['reason']}")
+        print()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Tenacious-Bench scoring evaluator")
     parser.add_argument("--task", type=str, help="Path to a single task JSON file")
@@ -226,10 +315,15 @@ def main():
     parser.add_argument("--batch", type=str, help="Directory of task JSON files")
     parser.add_argument("--agent_outputs", type=str, help="JSONL file mapping task_id -> output")
     parser.add_argument("--judge_model", type=str, default=None, help="LLM judge model override")
+    parser.add_argument("--demo", action="store_true",
+                        help="Run scorer on all three wired examples (examples/ex01-03) and print per-dimension results")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
-    if args.task and args.output:
+    if args.demo:
+        run_demo(args.judge_model)
+
+    elif args.task and args.output:
         with open(args.task) as f:
             task = json.load(f)
         result = score_task(task, args.output, args.judge_model)
@@ -260,6 +354,7 @@ def main():
     else:
         parser.print_help()
         sys.exit(1)
+
 
 
 if __name__ == "__main__":

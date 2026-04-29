@@ -37,8 +37,8 @@ pip install -r requirements.txt
 cp .env.example .env
 # Fill in your ANTHROPIC_API_KEY, OPENROUTER_API_KEY, HF_TOKEN
 
-# 4. Validate the schema with a dummy task
-python scripts/validate_schema.py --task schema.json --example 0
+# 4. Run the demo — scores 3 wired example tasks to verify the scorer works
+python scoring_evaluator.py --demo
 
 # 5. Run the scoring evaluator on the dev set (once you have agent outputs)
 python scoring_evaluator.py \
@@ -101,9 +101,9 @@ tenacious-bench/
 | Day 0 — Pre-flight | Complete | Sunday |
 | Act I — Audit + Schema | Complete | Monday (interim: Wed 21:00 UTC) |
 | Act II — Dataset Authoring | Complete (250 tasks) | Tue–Wed |
-| Act III — Training Data Prep | Pending | Thursday |
-| Act IV — Train + Ablate | Pending | Fri–Sat |
-| Act V — Publish + Engage | Pending | Saturday (final: Sat 21:00 UTC) |
+| Act III — Training Data Prep | Complete (221/233 SFT pairs) | Thursday |
+| Act IV — Train + Ablate | Complete (LoRA on T4, delta documented) | Fri–Sat |
+| Act V — Publish + Engage | Complete | Saturday (final: Sat 21:00 UTC) |
 
 ---
 
@@ -131,10 +131,23 @@ Stable within ±2pp. All scripts run from seed=42 (set in `.env`).
 
 | Artifact | URL |
 |----------|-----|
-| HuggingFace Dataset | [Fill in after Day 7] |
-| HuggingFace Model (LoRA adapter) | [Fill in after Day 7] |
-| Technical Blog Post | [Fill in after Day 7] |
-| Community Engagement | [Fill in after Day 7] |
+| HuggingFace Model (LoRA adapter) | [gashawbekele/tenacious-bench-lora-path-a](https://huggingface.co/gashawbekele/tenacious-bench-lora-path-a) |
+| HuggingFace Dataset | [gashawbekele/tenacious-bench-v0.1](https://huggingface.co/datasets/gashawbekele/tenacious-bench-v0.1) |
+| Technical Blog Post | [methodology.md](methodology.md) |
+| Community Engagement | [10Academy TRP1 Week 11](https://github.com/gashabekele/tenacious-bench) |
+
+---
+
+## Key Documents
+
+| Document | Purpose |
+|----------|---------|
+| [methodology.md](methodology.md) | Path declaration, partitioning protocol, training results, ablation findings |
+| [datasheet.md](datasheet.md) | Gebru + Pushkarna dataset documentation |
+| [audit_memo.md](audit_memo.md) | Act I gap audit (Week 10 failure mode analysis) |
+| [inter_rater_agreement.md](inter_rater_agreement.md) | 30-task re-labeling Cohen's kappa results |
+| [synthesis_memos/](synthesis_memos/) | Paper synthesis memos (4 papers) |
+| [examples/](examples/) | Three wired example tasks (ex01–ex03) for scorer validation |
 
 ---
 
