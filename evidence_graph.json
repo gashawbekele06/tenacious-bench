@@ -1,45 +1,77 @@
 {
-  "_comment": "Maps every numeric claim in the memo and blog post to its source. Fill in as you produce results.",
+  "_comment": "Maps every numeric claim in the memo and blog post to its source file and field.",
   "claims": [
     {
       "claim_id": "delta_a_headline",
-      "claim_text": "Trained model achieves X% pass rate on Tenacious-Bench held-out, vs Y% for baseline",
+      "claim_text": "Trained model mean score 0.5315 on Tenacious-Bench held-out (n=3); baseline mean 0.5315; delta=0.0 (p=1.0, not significant)",
       "source_type": "ablation_table",
       "source_file": "ablations/ablation_results.json",
-      "source_field": "delta_a.mean_a",
-      "resolved": false
+      "source_field": "delta_a.mean_a / delta_a.mean_b / delta_a.delta / delta_a.p_value",
+      "resolved": true,
+      "resolved_value": "mean_a=0.5315, mean_b=0.5315, delta=0.0, p=1.0"
     },
     {
       "claim_id": "delta_b_result",
-      "claim_text": "Training beats / does not beat prompt engineering alone",
+      "claim_text": "Training does not beat prompt engineering alone (delta_b=0.0, p=1.0, not significant)",
       "source_type": "ablation_table",
       "source_file": "ablations/ablation_results.json",
       "source_field": "delta_b.significant",
-      "resolved": false
+      "resolved": true,
+      "resolved_value": "false — delta=0.0, p=1.0"
     },
     {
       "claim_id": "dataset_size",
-      "claim_text": "Tenacious-Bench v0.1 contains N tasks across M dimensions",
+      "claim_text": "Tenacious-Bench v0.1 contains 250 tasks across 8 dimensions (233 train / 14 dev / 3 held-out)",
       "source_type": "dataset_file",
       "source_file": "tenacious_bench_v0.1/",
-      "source_field": "count of task JSON files",
-      "resolved": false
+      "source_field": "count of .json files in train/, dev/, held_out/",
+      "resolved": true,
+      "resolved_value": "train=233, dev=14, held_out=3, total=250"
     },
     {
       "claim_id": "inter_rater_agreement",
-      "claim_text": "Inter-rater agreement of X% across all rubric dimensions",
+      "claim_text": "97.3% overall agreement across rubric dimensions; 83.3% on tone_judge; kappa=0.95 overall, kappa=0.66 tone_judge",
       "source_type": "methodology_doc",
       "source_file": "inter_rater_agreement.md",
-      "source_field": "Results table — Overall % Agreement",
-      "resolved": false
+      "source_field": "Results table — Overall % Agreement and Cohen's kappa",
+      "resolved": true,
+      "resolved_value": "97.3% overall, 83.3% tone_judge, k=0.95 overall, k=0.66 tone_judge"
     },
     {
       "claim_id": "contamination_clean",
-      "claim_text": "Zero held-out tasks have 8-gram overlap with training partition",
+      "claim_text": "Zero held-out tasks have 8-gram overlap or cosine similarity >= 0.90 with training partition",
       "source_type": "contamination_report",
       "source_file": "contamination_check.json",
-      "source_field": "summary.ngram_violations",
-      "resolved": false
+      "source_field": "summary.ngram_violations / summary.embedding_violations / summary.time_shift_violations",
+      "resolved": true,
+      "resolved_value": "ngram_violations=0, embedding_violations=0, time_shift_violations=0"
+    },
+    {
+      "claim_id": "sft_pass_rate",
+      "claim_text": "221 of 233 training tasks produced passing SFT pairs (94.8% pass rate)",
+      "source_type": "generation_log",
+      "source_file": "training_data/sft_generation_log.json",
+      "source_field": "summary.pairs_passing / summary.tasks_processed",
+      "resolved": true,
+      "resolved_value": "221/233 = 94.8%"
+    },
+    {
+      "claim_id": "training_loss",
+      "claim_text": "LoRA training loss dropped from 3.08 at step 10 to 0.42 at step 80; final epoch loss 0.99",
+      "source_type": "training_log",
+      "source_file": "training/training_run.log",
+      "source_field": "step 10 loss / step 80 loss / final epoch loss",
+      "resolved": true,
+      "resolved_value": "step10=3.08, step80=0.42, epoch3_final=0.99"
+    },
+    {
+      "claim_id": "output_length_reduction",
+      "claim_text": "Trained outputs averaged 210 words vs baseline 256 words (-18% reduction)",
+      "source_type": "ablation_table",
+      "source_file": "ablations/held_out_traces.jsonl",
+      "source_field": "avg word count per condition",
+      "resolved": true,
+      "resolved_value": "baseline_avg=256, trained_avg=210, reduction=18%"
     }
   ]
 }
