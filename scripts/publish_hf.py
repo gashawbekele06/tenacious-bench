@@ -19,11 +19,26 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
+def normalize(task: dict) -> dict:
+    """Flatten nested fields to JSON strings for a consistent schema across partitions."""
+    return {
+        "task_id": task.get("task_id", ""),
+        "source_mode": task.get("source_mode", ""),
+        "difficulty": task.get("difficulty", ""),
+        "dimension": task.get("dimension", ""),
+        "input": json.dumps(task.get("input", {})),
+        "candidate_output": task.get("candidate_output", ""),
+        "ground_truth": json.dumps(task.get("ground_truth", {})),
+        "rubric": json.dumps(task.get("rubric", {})),
+        "metadata": json.dumps(task.get("metadata", {})),
+    }
+
+
 def load_partition(directory: str) -> list[dict]:
     tasks = []
     for p in sorted(Path(directory).glob("*.json")):
-        with open(p) as f:
-            tasks.append(json.load(f))
+        with open(p, encoding="utf-8") as f:
+            tasks.append(normalize(json.load(f)))
     return tasks
 
 
