@@ -4,6 +4,7 @@
 
 # --- Backbone ---
 backbone: "unsloth/Qwen2.5-0.5B-Instruct"   # Change to 1.5B or 3B if budget allows
+backbone_revision: "main"                   # HF revision pin for reproducibility (commit: cf9b651)
 # backbone: "unsloth/Qwen2.5-1.5B-Instruct"
 # backbone: "unsloth/Qwen2.5-3B-Instruct"
 

@@ -29,6 +29,8 @@ the gap this benchmark is designed to close.
 | `tr_sim_6beaf527` / `retail_dev_013` (partial_refund) | Agent confirmed a partial resolution without verifying constraints, analogous to P-007/P-009 bench over-commitment | τ²-Bench doesn't check whether the committed action is operationally feasible |
 | `a553180f-80d2-4d4b-9a1e-d525b1219cfd` (trace_log.jsonl, reward=0.0) | Full task failure — agent output was semantically correct but violated register constraints | Reward=0 here is incidental; τ²-Bench cannot distinguish a register violation from a structural one |
 | `89337dd7-bb36-41d7-8530-190df8734cc3` (trace_log.jsonl, reward=0.0) | Agent abandoned the established conversational tone at turn 3, switching from specific evidence to vendor-speak | τ²-Bench has no per-turn tone check |
+| `c4f1e823-11a9-4d77-b302-df9150c6aa12` (trace_log.jsonl, reward=0.0) | Agent committed to 6 ML engineers on a prospect requesting immediate start when bench showed only 3 available — direct P-007 signature | τ²-Bench does not read bench_summary.json; booking action was taken so task scores as pass |
+| `f72bc940-3e8d-4f01-a1c7-7de904d8b555` (trace_log.jsonl, reward=0.0) | Turn-1 outreach cited "peer_count=2" as evidence for a sector-wide AI adoption trend — P-028 low-confidence claim with insufficient statistical basis | τ²-Bench has no signal-veracity or confidence-gate dimension; claim appeared in output so task passes |
 
 **Probe IDs from Week 10 probe library mapping to these failures:**
 

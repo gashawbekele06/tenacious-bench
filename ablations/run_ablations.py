@@ -22,6 +22,7 @@ Usage:
 import argparse
 import json
 import random
+import time
 import numpy as np
 from pathlib import Path
 from datetime import datetime, timezone
@@ -54,6 +55,35 @@ def _is_metadata_phrase(phrase: str) -> bool:
     if "_" in phrase and len(phrase) > 20:
         return True
     return False
+
+
+def estimate_tokens(text: str) -> int:
+    """Rough token estimate: 1 token ≈ 4 characters (GPT/Claude convention)."""
+    return max(1, len(text) // 4)
+
+
+# Cost per 1M tokens (input+output blended) by model family
+TOKEN_COST_PER_M = {
+    "claude-haiku-4-5": 0.10,
+    "qwen3-8b": 1.00,
+    "default": 0.25,
+}
+
+
+def compute_task_cost(input_text: str, output_text: str, model: str = "claude-haiku-4-5") -> dict:
+    """Returns token counts and estimated USD cost for one inference call."""
+    input_tokens = estimate_tokens(input_text)
+    output_tokens = estimate_tokens(output_text)
+    total_tokens = input_tokens + output_tokens
+    cost_per_m = TOKEN_COST_PER_M.get(model, TOKEN_COST_PER_M["default"])
+    cost_usd = (total_tokens / 1_000_000) * cost_per_m
+    return {
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "total_tokens": total_tokens,
+        "cost_usd": round(cost_usd, 6),
+        "model": model,
+    }
 
 
 def score_output(task: dict, output: str) -> float:
@@ -149,16 +179,40 @@ def main():
     print(f"Tasks: {len(tasks)}")
 
     baseline_scores, trained_scores, prompted_scores, traces = [], [], [], []
+    total_cost = {"baseline": 0.0, "trained": 0.0, "prompted": 0.0}
+    total_tokens = {"baseline": 0, "trained": 0, "prompted": 0}
 
     for task in tasks:
         tid = task["task_id"]
+        task_input_text = json.dumps(task.get("input", {}))
         b_out = baseline_outputs.get(tid, "")
         t_out = trained_outputs.get(tid, "")
         p_out = prompted_outputs.get(tid, "")
 
+        # --- scoring with wall-clock timing ---
+        t0 = time.perf_counter()
         b_score = score_output(task, b_out)
+        b_elapsed = time.perf_counter() - t0
+
+        t0 = time.perf_counter()
         t_score = score_output(task, t_out)
+        t_elapsed = time.perf_counter() - t0
+
+        t0 = time.perf_counter()
         p_score = score_output(task, p_out)
+        p_elapsed = time.perf_counter() - t0
+
+        # --- per-task cost-pareto ---
+        b_cost = compute_task_cost(task_input_text, b_out)
+        t_cost = compute_task_cost(task_input_text, t_out)
+        p_cost = compute_task_cost(task_input_text, p_out)
+
+        total_cost["baseline"] += b_cost["cost_usd"]
+        total_cost["trained"] += t_cost["cost_usd"]
+        total_cost["prompted"] += p_cost["cost_usd"]
+        total_tokens["baseline"] += b_cost["total_tokens"]
+        total_tokens["trained"] += t_cost["total_tokens"]
+        total_tokens["prompted"] += p_cost["total_tokens"]
 
         baseline_scores.append(b_score)
         trained_scores.append(t_score)
@@ -168,6 +222,11 @@ def main():
             "baseline_score": round(b_score, 4),
             "trained_score": round(t_score, 4),
             "prompted_score": round(p_score, 4),
+            "cost_pareto": {
+                "baseline": {**b_cost, "latency_s": round(b_elapsed, 4)},
+                "trained":  {**t_cost, "latency_s": round(t_elapsed, 4)},
+                "prompted": {**p_cost, "latency_s": round(p_elapsed, 4)},
+            },
         })
 
     print("\nComputing Delta A (trained vs baseline)...")
@@ -193,6 +252,13 @@ def main():
             "week10_tau2_score": args.tau2_score,
             "trained_mean": delta_a["mean_a"],
             "note": "Reused Week 10 score — no re-running of τ²-Bench this week.",
+        },
+        "cost_pareto": {
+            "description": "Token counts and USD cost per condition across all held-out tasks",
+            "baseline":  {"total_tokens": total_tokens["baseline"],  "total_cost_usd": round(total_cost["baseline"],  6)},
+            "trained":   {"total_tokens": total_tokens["trained"],   "total_cost_usd": round(total_cost["trained"],   6)},
+            "prompted":  {"total_tokens": total_tokens["prompted"],  "total_cost_usd": round(total_cost["prompted"],  6)},
+            "note": "Token counts estimated at 1 token per 4 chars. Per-task breakdown in held_out_traces.jsonl.",
         },
     }
 

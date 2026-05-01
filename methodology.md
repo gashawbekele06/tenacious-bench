@@ -60,7 +60,7 @@ dimension distribution across partitions.
 | Check | Result | Details |
 |-------|--------|---------|
 | N-gram overlap (8-gram, ≥3 shared n-grams) | PASS | 0 violations (250 tasks checked) |
-| Embedding similarity (cosine ≥ 0.90) | PASS | 0 violations (sentence-transformers all-MiniLM-L6-v2) |
+| Embedding similarity (cosine ≥ 0.80) | PASS | 0 violations (sentence-transformers all-MiniLM-L6-v2, held-out vs train AND held-out vs dev) |
 | Time-shift verification | PASS | 0 violations (all tasks have `created_at` metadata) |
 
 Both checks applied with AND logic: a pair must violate *both* conditions to be flagged.

@@ -72,6 +72,7 @@ def train_path_a(config: dict, dataset):
     print(f"\n[Path A — SFT] Loading backbone: {config['backbone']}")
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=config["backbone"],
+        revision=config.get("backbone_revision", "main"),
         max_seq_length=config.get("max_seq_length", 2048),
         dtype=None,  # Auto-detect: fp16 on T4, bf16 on A100/4090
         load_in_4bit=False,  # Use 16-bit LoRA per Unsloth Qwen 3.5 guide
@@ -131,6 +132,7 @@ def train_path_b(config: dict, dataset):
 
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name=config["backbone"],
+        revision=config.get("backbone_revision", "main"),
         max_seq_length=config.get("max_seq_length", 2048),
         dtype=None,
         load_in_4bit=False,

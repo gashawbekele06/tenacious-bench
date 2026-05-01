@@ -65,7 +65,7 @@ def ngram_overlap_check(train_tasks: list[dict], held_out_tasks: list[dict], n: 
 
 
 def embedding_similarity_check(
-    train_tasks: list[dict], held_out_tasks: list[dict], threshold: float = 0.85
+    train_tasks: list[dict], held_out_tasks: list[dict], threshold: float = 0.80
 ) -> list[dict]:
     """Cosine similarity check using sentence-transformers."""
     try:
@@ -122,7 +122,7 @@ def main():
     parser.add_argument("--held_out", required=True)
     parser.add_argument("--output", default="contamination_check.json")
     parser.add_argument("--ngram_n", type=int, default=8)
-    parser.add_argument("--sim_threshold", type=float, default=0.90)
+    parser.add_argument("--sim_threshold", type=float, default=0.80)
     args = parser.parse_args()
 
     print("Loading tasks...")
@@ -131,31 +131,44 @@ def main():
     held_out_tasks = load_tasks(args.held_out)
     print(f"  Train: {len(train_tasks)}, Dev: {len(dev_tasks)}, Held-out: {len(held_out_tasks)}")
 
-    print(f"\n[1/3] Running {args.ngram_n}-gram overlap check...")
-    ngram_violations = ngram_overlap_check(train_tasks, held_out_tasks, n=args.ngram_n)
-    print(f"  Violations found: {len(ngram_violations)}")
+    print(f"\n[1/4] Running {args.ngram_n}-gram overlap check (held-out vs train)...")
+    ngram_violations_train = ngram_overlap_check(train_tasks, held_out_tasks, n=args.ngram_n)
+    print(f"  Violations found: {len(ngram_violations_train)}")
 
-    print(f"\n[2/3] Running embedding similarity check (threshold={args.sim_threshold})...")
-    emb_violations = embedding_similarity_check(train_tasks, held_out_tasks, threshold=args.sim_threshold)
-    print(f"  Violations found: {len(emb_violations)}")
+    print(f"\n[2/4] Running {args.ngram_n}-gram overlap check (held-out vs dev)...")
+    ngram_violations_dev = ngram_overlap_check(dev_tasks, held_out_tasks, n=args.ngram_n)
+    print(f"  Violations found: {len(ngram_violations_dev)}")
 
-    print("\n[3/3] Running time-shift verification...")
+    print(f"\n[3/4] Running embedding similarity check (threshold={args.sim_threshold})...")
+    emb_violations_train = embedding_similarity_check(train_tasks, held_out_tasks, threshold=args.sim_threshold)
+    print(f"  held-out vs train violations: {len(emb_violations_train)}")
+    emb_violations_dev = embedding_similarity_check(dev_tasks, held_out_tasks, threshold=args.sim_threshold)
+    print(f"  held-out vs dev violations:   {len(emb_violations_dev)}")
+
+    print("\n[4/4] Running time-shift verification...")
     all_tasks = train_tasks + dev_tasks + held_out_tasks
     time_violations = time_shift_check(all_tasks)
     print(f"  Violations found: {len(time_violations)}")
+
+    ngram_violations = ngram_violations_train + ngram_violations_dev
+    emb_violations = emb_violations_train + emb_violations_dev
 
     report = {
         "summary": {
             "train_count": len(train_tasks),
             "dev_count": len(dev_tasks),
             "held_out_count": len(held_out_tasks),
-            "ngram_violations": len(ngram_violations),
-            "embedding_violations": len(emb_violations),
+            "ngram_violations_held_vs_train": len(ngram_violations_train),
+            "ngram_violations_held_vs_dev": len(ngram_violations_dev),
+            "embedding_violations_held_vs_train": len(emb_violations_train),
+            "embedding_violations_held_vs_dev": len(emb_violations_dev),
             "time_shift_violations": len(time_violations),
             "passed": (len(ngram_violations) == 0 and len(emb_violations) == 0 and len(time_violations) == 0),
         },
-        "ngram_overlap_violations": ngram_violations,
-        "embedding_similarity_violations": emb_violations,
+        "ngram_overlap_violations_held_vs_train": ngram_violations_train,
+        "ngram_overlap_violations_held_vs_dev": ngram_violations_dev,
+        "embedding_similarity_violations_held_vs_train": emb_violations_train,
+        "embedding_similarity_violations_held_vs_dev": emb_violations_dev,
         "time_shift_violations": time_violations,
     }
 
