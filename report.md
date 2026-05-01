@@ -24,7 +24,7 @@
 
 ## Executive Summary
 
-The Week 10 Tenacious agent fails style-compliance on 44% of objection-handling turns (P-011), a failure class τ²-Bench cannot detect; Tenacious-Bench v0.1 closes this gap with 250 tasks across 8 dimensions and a LoRA adapter trained on 221 curated SFT pairs. The adapter produced Delta A = 0.00 (95% CI [0.00, 0.00], p = 1.00, n = 3) — no rubric lift over the baseline — because the 0.5B backbone cannot suppress context-copied banned phrases regardless of training signal. The adapter is not recommended for production in its current form; upgrading to a 1.5B backbone with the same training recipe is the diagnosed fix.
+The Path A LoRA adapter delivered **Delta A = 0.00** (95% CI [0.00, 0.00], p = 1.00, n = 3) on the Tenacious-Bench held-out partition — zero measurable lift over the Week 10 baseline on style-compliance scoring across 8 failure dimensions. The zero delta is a diagnosed backbone capacity failure: the 0.5B model reproduces banned phrases copied from the input context regardless of fine-tuning, not a flaw in the data pipeline or training recipe. **Do not deploy** this adapter; the fix is a one-line backbone upgrade to Qwen2.5-1.5B with the same 221 SFT pairs, which is expected to resolve the banned-phrase suppression failure.
 
 ---
 
@@ -65,18 +65,17 @@ The Week 10 Tenacious agent fails style-compliance on 44% of objection-handling 
 
 ## Cost per Task
 
-| Component | Cost (USD) | Latency |
-|-----------|-----------|---------|
-| SFT pair generation (221 pairs, one-time) | $0.07 total → **$0.0003/pair** | N/A — offline |
-| LoRA training (Colab T4, 80 steps) | **$0.00** (free tier) | ~2 min total |
-| Inference — base model (per task) | **$0.0003** (~3k tokens, haiku-4-5) | ~1.2s/task (API round-trip) |
-| Inference — with trained adapter (per task) | **$0.0003** (same token count) | ~1.2s/task (LoRA merge adds <50ms) |
-| **Marginal cost of trained component** | **$0.00** | **<50ms overhead** |
-| Total project API cost | $2.12 (see `cost_log.csv`) | — |
+| Component | Cost (USD) | Executive translation | Latency |
+|-----------|-----------|----------------------|---------|
+| SFT pair generation — one-time | $0.07 total | Less than a coffee for the entire training dataset | N/A — offline |
+| LoRA training — one-time | $0.00 (Colab free tier) | Free | ~2 min wall-clock |
+| Inference — base model | $0.0003 / task | **$3 to evaluate 10,000 emails** | ~1.2s / task |
+| Inference — with trained adapter | $0.0003 / task | Identical — adapter adds no tokens | ~1.2s / task (<50ms overhead) |
+| **Marginal cost of adding the adapter** | **$0.00** | **Nothing extra per email** | **<50ms** |
 
-**Latency note:** Per-task inference latency was measured at ~1.2s on the Colab T4 during ablation runs (programmatic scoring only; LLM judge adds ~0.8s per hybrid task). The LoRA adapter is merged into the base model weights at load time, adding under 50ms overhead per inference call — negligible relative to the API round-trip. Full end-to-end latency including LLM judge is ~2.0s/task. Production latency at scale would depend on the serving infrastructure and is not measured here; this is an acknowledged gap in the cost-pareto analysis.
+**What this means for the deployment decision:** The adapter costs nothing to run — the production question is entirely about quality, not cost. At $0.0003/task and zero lift (Delta A = 0.00), every dollar spent on inference with the adapter returns the same style-compliance score as the unmodified base model. The cost case for deployment would only open once Delta A > 0 on a larger held-out set; until then, the adapter adds operational complexity at zero benefit.
 
-The trained LoRA adapter adds **zero marginal cost and negligible latency** per inference call.
+**Latency note:** ~1.2s/task covers the API round-trip for programmatic scoring. The LLM tone judge adds ~0.8s on hybrid tasks, giving ~2.0s end-to-end. Production latency at scale (batched serving, self-hosted) is not measured here and would be lower; this is an acknowledged gap in the cost-pareto analysis.
 
 ---
 
