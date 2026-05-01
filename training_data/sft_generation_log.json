@@ -1,0 +1,1178 @@
+{
+  "run_at": "2026-04-29T16:39:57.422370+00:00",
+  "model": "claude-haiku-4-5",
+  "passed": 221,
+  "failed": 4,
+  "skipped": 8,
+  "total": 233,
+  "pass_rate": 0.982,
+  "rows": [
+    {
+      "task_id": "TB-HA-0001",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0002",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0004",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0005",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0008",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0009",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0010",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0011",
+      "passed": true,
+      "failures": [
+        "signal_reference_check: required phrase not found (need one of: ['AI maturity below Segment 4 gate']...)"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0013",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0014",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0016",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0017",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0018",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0019",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0020",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0021",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0022",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0023",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0024",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0025",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0026",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0027",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0028",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0029",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0030",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['best practice']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0031",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0032",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['best practice']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0033",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0034",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0035",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0036",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0037",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0038",
+      "passed": true,
+      "failures": [
+        "signal_reference_check: required phrase not found (need one of: ['Series A funding', '3 ML hires in 60 days']...)"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0040",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0041",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0042",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0043",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0044",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0049",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0050",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0051",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0052",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0053",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0054",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0055",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0056",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0057",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0058",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0059",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0060",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0061",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0062",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0063",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0064",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0065",
+      "passed": false,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0066",
+      "passed": false,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0067",
+      "passed": false,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0068",
+      "passed": false,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0069",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0070",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0071",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0072",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0073",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0074",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0075",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0076",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0081",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0082",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0083",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0084",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0085",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0086",
+      "passed": true,
+      "failures": [
+        "signal_reference_check: required phrase not found (need one of: ['vLLM adoption in peer set', 'East Africa fintech gap']...)"
+      ]
+    },
+    {
+      "task_id": "TB-MS-0087",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0088",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0089",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0090",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0091",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0092",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0093",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0094",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0095",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0096",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0097",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0098",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-MS-0099",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0001",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0002",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0003",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0004",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0005",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0006",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0007",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0008",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0009",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0010",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0011",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0012",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0013",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0014",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0015",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0016",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0017",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0018",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0019",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0020",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0021",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0022",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0023",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0024",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0025",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0026",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0027",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0028",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0029",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0030",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0031",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0032",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0033",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0034",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0035",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0036",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0037",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0038",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0039",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0040",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0041",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0042",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0043",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0044",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0045",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0046",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0047",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0048",
+      "passed": true,
+      "failures": [
+        "word_count_check: 121 words > 120 limit"
+      ]
+    },
+    {
+      "task_id": "TB-PG-0049",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0050",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0051",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0052",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0053",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0054",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0055",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0056",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0057",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0058",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0059",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0060",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['circle back']"
+      ]
+    },
+    {
+      "task_id": "TB-PG-0061",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0062",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0063",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0064",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0065",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0066",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0067",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0068",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0069",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-PG-0070",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0002",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0003",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0004",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0005",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0006",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0007",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0008",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0009",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0010",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0011",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0012",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0013",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0014",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0015",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0016",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0017",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0018",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0019",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0020",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0021",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0022",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0023",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0024",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0025",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0026",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0027",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0028",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0029",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0030",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0031",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0032",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0033",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0034",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0035",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0036",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0037",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0038",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0039",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0040",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0041",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0042",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0043",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0044",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0045",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0046",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0047",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0048",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0049",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0050",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0051",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0052",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0053",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0054",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0055",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0056",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0057",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0058",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0059",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0060",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0061",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0062",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0063",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0064",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0065",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0066",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0067",
+      "passed": true,
+      "failures": [
+        "banned_phrase_check: banned phrases found: ['bench']"
+      ]
+    },
+    {
+      "task_id": "TB-TD-0068",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0069",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0070",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "task_id": "TB-TD-0071",
+      "passed": true,
+      "failures": []
+    }
+  ]
+}
