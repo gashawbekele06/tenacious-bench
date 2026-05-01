@@ -155,9 +155,9 @@ Stable within ±2pp. All scripts run from seed=42 (set in `.env`).
 |----------|-----|
 | HuggingFace Dataset | [gashawbekele/tenacious-bench-v0.1](https://huggingface.co/datasets/gashawbekele/tenacious-bench-v0.1) |
 | HuggingFace Model (LoRA adapter) | [gashawbekele/tenacious-bench-lora-path-a](https://huggingface.co/gashawbekele/tenacious-bench-lora-path-a) |
-| Blog Post | | Blog Post | [HuggingFace Community Post](https://huggingface.co/datasets/gashawbekele/tenacious-bench-v0.1/discussions/1) |
+| Blog Post | [HuggingFace Community Post](https://huggingface.co/datasets/gashawbekele/tenacious-bench-v0.1/discussions/1) |
 | Executive Memo | [memo.pdf](memo.pdf) |
-| Community Issue Draft | https://github.com/sierra-research/tau-bench/issues/81 |
+| Community Engagement | [τ²-Bench Issue #81](https://github.com/sierra-research/tau-bench/issues/81) |
 
 ---
 
