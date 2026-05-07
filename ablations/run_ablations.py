@@ -86,6 +86,26 @@ def compute_task_cost(input_text: str, output_text: str, model: str = "claude-ha
     }
 
 
+def extract_assistant_response(output: str) -> str:
+    """
+    Extract only the assistant-generated portion from a stored conversation string.
+
+    Output files store the full chat history in the format:
+        "system\\n<system prompt>\\nuser\\n<user message>\\nassistant\\n<model response>"
+
+    Scoring must evaluate ONLY the model's response — not the input context.
+    Bug (pre-fix): the full string was scored, so banned words in the task input
+    (e.g. "bench capacity 2 available" in signal_details) always failed
+    banned_phrase_check regardless of what the model actually generated.
+    This produced zero delta across all conditions (Delta A = 0.00, CI=[0,0]).
+    """
+    marker = "assistant\n"
+    idx = output.rfind(marker)
+    if idx != -1:
+        return output[idx + len(marker):]
+    return output  # fallback: no marker found, score full string
+
+
 def score_output(task: dict, output: str) -> float:
     """Run programmatic scoring (without LLM judge for speed in ablations)."""
     import re
@@ -93,13 +113,16 @@ def score_output(task: dict, output: str) -> float:
     total_weight = 0.0
     weighted_score = 0.0
 
+    # Fix: score only what the model generated, not the full conversation history.
+    response_text = extract_assistant_response(output)
+
     for dim in rubric["dimensions"]:
         if dim["check_type"] == "llm_score":
             continue  # Skip LLM checks in ablation for cost reasons; add separately if needed
         weight = dim["weight"]
         total_weight += weight
         check_value = dim.get("check_value", "")
-        text = output.lower()
+        text = response_text.lower()
 
         if dim["check_type"] == "not_contains":
             patterns = [p.strip() for p in check_value.split("|") if p.strip()]
@@ -112,10 +135,10 @@ def score_output(task: dict, output: str) -> float:
             else:
                 passed = any(p.lower() in text for p in patterns)
         elif dim["check_type"] == "regex":
-            passed = bool(re.search(check_value, output, re.IGNORECASE))
+            passed = bool(re.search(check_value, response_text, re.IGNORECASE))
         elif dim["check_type"] == "word_count":
             max_words = int(check_value)
-            body = " ".join(l for l in output.split("\n") if not l.lower().startswith("subject:"))
+            body = " ".join(l for l in response_text.split("\n") if not l.lower().startswith("subject:"))
             passed = len(body.split()) <= max_words
         else:
             passed = False

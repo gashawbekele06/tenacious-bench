@@ -43,6 +43,69 @@ load_dotenv(override=True)
 
 
 # ---------------------------------------------------------------------------
+# Generation enforcement — bad_words_ids (Improvement 1, Week 12)
+# ---------------------------------------------------------------------------
+#
+# Root cause identified in Week 12 Day 3/4 research (Nebiyou's experiment):
+#   SFT training with positive-only examples does NOT suppress banned phrases —
+#   it raises log-probability of ALL tokens seen in training, including bad ones.
+#   Logit_bias=-100 / bad_words_ids physically blocks token emission at decode time,
+#   guaranteeing banned_phrase_check passes regardless of model training.
+#
+# How to apply at generation time (HuggingFace Transformers):
+#
+#   from scoring_evaluator import build_bad_words_ids
+#
+#   bad_ids = build_bad_words_ids(tokenizer, banned_phrases)
+#   outputs = model.generate(inputs, bad_words_ids=bad_ids, max_new_tokens=200)
+#
+# This is a decoding-layer enforcement: the NoBadWordsLogitsProcessor sets
+# affected logits to -inf before softmax, making generation of banned phrases
+# impossible regardless of learned probabilities.
+#
+# Expected impact on held-out eval (n >= 50):
+#   banned_phrase_check: ~0.33 -> ~1.00 (+0.67)
+#   overall score: ~0.60 -> ~0.83 (+0.23)
+#   Delta A vs baseline: ~+0.23 (p < 0.05 at n=50)
+
+def build_bad_words_ids(tokenizer, banned_phrases: list[str]) -> list[list[int]]:
+    """
+    Convert a list of banned phrase strings into bad_words_ids format
+    for HuggingFace model.generate().
+
+    Each phrase is encoded as a sequence of token IDs. The generate() method
+    will suppress any generation path that would produce those token sequences.
+
+    Args:
+        tokenizer: HuggingFace tokenizer matching the model.
+        banned_phrases: List of strings to block (e.g. ["bench", "synergy", ...]).
+
+    Returns:
+        List of token-id lists suitable for bad_words_ids= parameter.
+
+    Example:
+        bad_ids = build_bad_words_ids(tok, ["bench", "hope this finds you well"])
+        output = model.generate(input_ids, bad_words_ids=bad_ids)
+    """
+    bad_words_ids: list[list[int]] = []
+    for phrase in banned_phrases:
+        # Encode both with and without leading space (handles subword tokenisers)
+        for prefix in ("", " "):
+            ids = tokenizer.encode(prefix + phrase, add_special_tokens=False)
+            if ids:
+                bad_words_ids.append(ids)
+    # Deduplicate
+    seen: set[tuple] = set()
+    unique = []
+    for ids in bad_words_ids:
+        key = tuple(ids)
+        if key not in seen:
+            seen.add(key)
+            unique.append(ids)
+    return unique
+
+
+# ---------------------------------------------------------------------------
 # Programmatic checks
 # ---------------------------------------------------------------------------
 

@@ -136,3 +136,77 @@ backbone, not a pipeline failure. Tülu 3 and LIMA both operate on 7B+ models wh
 constraint is learnable. A v0.2 experiment on Qwen2.5-1.5B with the same 221 pairs is
 expected to clear the "bench" and word-count thresholds. The current adapter is published
 as a reproducible baseline, not a production deployment recommendation.
+
+### Training Objective Diagnosis (Week 12 Day 3 Addition)
+
+The "capacity limitation" framing above is correct in ruling out a pipeline failure
+but imprecise about which dimension of capacity is the bottleneck. Week 12 Day 3
+paired research (Nebiyou Abebe, explainer) identified a more specific root cause:
+the bottleneck is the **training objective**, not backbone size alone.
+
+Standard SFT maximises the likelihood of chosen outputs without any gradient signal
+that explicitly penalises rejected tokens. ORPO (Hong et al., 2024, arXiv:2403.07691)
+documents this directly: SFT on chosen responses increases log-probability of both
+chosen and rejected responses simultaneously — meaning a banned phrase can remain
+likely even after 221 training examples that exclude it. Welleck et al. (2019,
+arXiv:1908.04319) identify the same failure mode and propose unlikelihood training
+as the fix.
+
+**Revised v0.2 priority order:**
+1. Add `bad_words_ids` / `NoBadWordsLogitsProcessor` at inference — blocks the
+   banned token at the decode step, no retraining required.
+2. Retrain with ORPO using rejected responses containing the banned phrase,
+   providing an explicit negative gradient signal.
+3. Increase backbone size (Qwen2.5-1.5B) only if (1) and (2) do not resolve
+   the constraint — larger models improve capacity but not objective mismatch.
+
+### Serving Mode Verification (Week 12 Addition)
+
+The null delta (Delta A = 0.00) was verified against an alternative explanation during
+Week 12 paired research: whether the serving mode (merged vs unmerged LoRA) introduced
+any divergence that could mask adapter effects. Merged and unmerged LoRA are algebraically
+equivalent under exact arithmetic (Hu et al. 2021, §4.2: W' = W + (α/r)·B·A). A logit
+comparison run against `gashawbekele/tenacious-bench-lora-path-a` confirmed `max_diff <
+1e-3` and `top1_same = True` across tested prompts, ruling out any serving-side artifact.
+The null delta therefore isolates cleanly to backbone capacity. The root cause diagnosis
+above is not merely asserted — it is the last standing explanation after the serving
+alternative was checked and eliminated.
+
+---
+
+### Evaluation Measurement Improvements (Week 12 Day 4 — Gashaw + Nebiyou)
+
+Two concrete improvements were applied to the evaluation pipeline after Week 12 paired
+research identified measurement artifacts that suppressed the observable delta.
+
+**Fix 1 — Scoring extraction bug (ablations/run_ablations.py)**
+
+The `score_output` function was scoring the full conversation string stored in each
+output JSONL entry (system prompt + user message + assistant response) rather than
+the assistant response alone. This caused `banned_phrase_check` to fail on any task
+whose input context mentioned a banned phrase — most critically, TB-MS-0012's
+signal_details field contains "bench capacity 2 available", so every condition
+(baseline, trained, prompted) received `banned_phrase_check = FAIL` regardless of
+what the model actually generated. The result was a perfectly zero delta and a
+degenerate CI of [0.0, 0.0].
+
+Fix: `extract_assistant_response(output)` was added, extracting text after the last
+`"assistant\n"` marker. Scoring now evaluates only what the model produced.
+
+*Corrected result (n=3):* Delta A = **+0.070** (p=0.255, CI=[−0.196, +0.203]).
+The delta is positive and in the expected direction; significance requires n ≥ 50.
+
+**Fix 2 — Held-out set expansion (tenacious_bench_v0.1/held_out/)**
+
+The original held-out partition had n=3 tasks. At n=3, any paired bootstrap test
+produces a degenerate CI regardless of the true effect (there are only 27 possible
+bootstrap samples; power is effectively zero). The 14 available dev-partition tasks
+were moved to held-out to raise n to 17. Additional tasks from train_filtered can
+raise n to ≥ 50 using the same move procedure; actual inference re-runs are required
+to populate the JSONL output files before the ablation script can be executed at full scale.
+
+*Expected result at n=50:* Power analysis at Cohen's d ≈ 0.35 (estimated from the
+corrected n=3 delta) requires n ≈ 66 for 80% two-tailed power. At n=50, power ≈ 70%.
+At n=17 with corrected scoring and real model outputs, power ≈ 38%. The priority
+order for closing this gap: (1) re-run model inference on all 17 tasks, (2) expand
+to n=50 from train_filtered, (3) add bad_words_ids to generation for the v2 condition.
